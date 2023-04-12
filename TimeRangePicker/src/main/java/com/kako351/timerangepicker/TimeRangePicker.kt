@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +32,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import java.lang.Math.PI
 
 /**
- * Jetpack Composeで時刻を選択するコンポーネント
+ * TimeRangePicker is a UI component that allows the user to select a time range.
+ * It represents a selected time range between the start and end times.
+ * @property modifier Modifier to be applied to the layout.
+ * @property startHour The start hour of the time range.
+ * @property startMinute The start minute of the time range.
+ * @property endHour The end hour of the time range.
+ * @property endMinute The end minute of the time range.
+ * @property onChangedTimeRange Callback that is invoked when the time range is changed.
  */
 @Composable
 fun TimeRangePicker(
@@ -39,44 +47,75 @@ fun TimeRangePicker(
     startHour: Float = 0f,
     startMinute: Float = 0f,
     endHour: Float = 12f,
-    endMinute: Float = 0f
+    endMinute: Float = 0f,
 ) {
     val vector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24)
     val painter = rememberVectorPainter(image = vector)
 
+    /**
+     * Radius of area to accept drag gesture.
+     */
     val dragStartAreaRadius = 100f
 
+    /**
+     * Center x Offset of the circle.
+     */
     var centerX by remember {
         mutableStateOf(0f)
     }
+    /**
+     * Center y Offset of the circle.
+     */
     var centerY by remember {
         mutableStateOf(0f)
     }
+    /**
+     * Dragged start time offset x
+     */
     var startTimeDragOffsetX by remember {
         mutableStateOf(0f)
     }
+    /**
+     * Dragged start time offset y
+     */
     var startTimeDragOffsetY by remember {
         mutableStateOf(0f)
     }
+    /**
+     * Dragged end time offset x
+     */
     var endTimeDragOffsetX by remember {
         mutableStateOf(0f)
     }
+    /**
+     * Dragged end time offset y
+     */
     var endTimeDragOffsetY by remember {
         mutableStateOf(0f)
     }
+    /**
+     * Allow dragging of start time
+     */
     var allowStartTimeDrag by remember {
         mutableStateOf(false)
     }
+    /**
+     * Allow dragging of end time
+     */
     var allowEndTimeDrag by remember {
         mutableStateOf(false)
     }
-    // xy座標からAngleを決める
+    /**
+     * Calculate start time angle from xy start time offset
+     */
     val startAngleAtan = remember(key1 = startTimeDragOffsetX, key2 = startTimeDragOffsetY) {
         derivedStateOf {
             Math.toDegrees(Math.atan2((startTimeDragOffsetY - centerY).toDouble(), (startTimeDragOffsetX - centerX).toDouble())).toFloat()
         }
     }
-    // startAngleAtanと半径からxy座標を決める
+    /**
+     * Calculate start time x offset from angle
+     */
     val startAngleX = remember(key1 = startAngleAtan.value, key2 = centerX) {
         derivedStateOf {
             val radius = centerX - 50f
@@ -84,6 +123,9 @@ fun TimeRangePicker(
             (radius * Math.cos(angle)).toFloat() + centerX
         }
     }
+    /**
+     * Calculate start time y offset from angle
+     */
     val startAngleY = remember(key1 = startAngleAtan.value, key2 = centerY) {
         derivedStateOf {
             val radius = centerY - 50f
@@ -92,10 +134,15 @@ fun TimeRangePicker(
         }
     }
 
-    // xy座標からAngleを決める
+    /**
+     * Calculate end time angle from xy end time offset
+     */
     val endAngleAtan = remember(key1 = endTimeDragOffsetX, key2 = endTimeDragOffsetY) {
         derivedStateOf { Math.toDegrees(Math.atan2((endTimeDragOffsetY - centerY).toDouble(), (endTimeDragOffsetX - centerX).toDouble())).toFloat() }
     }
+    /**
+     * Calculate end time x offset from angle
+     */
     val endAngleX = remember(key1 = endAngleAtan.value, key2 = centerX) {
         derivedStateOf {
             val radius = centerX - 50f
@@ -103,6 +150,9 @@ fun TimeRangePicker(
             (radius * Math.cos(angle)).toFloat() + centerX
         }
     }
+    /**
+     * Calculate end time y offset from angle
+     */
     val endAngleY = remember(key1 = endAngleAtan.value, key2 = centerY) {
         derivedStateOf {
             val radius = centerY - 50f
@@ -110,6 +160,9 @@ fun TimeRangePicker(
             (radius * Math.sin(angle)).toFloat() + centerY
         }
     }
+    /**
+     * Calculate display start time text from start time angle
+     */
     val startTime = remember(key1 = startAngleAtan.value) {
         derivedStateOf {
             var angle = startAngleAtan.value + Math.toDegrees(PI / 2)
@@ -120,6 +173,9 @@ fun TimeRangePicker(
             "%02d:%02d".format(hour, minute)
         }
     }
+    /**
+     * Calculate display end time text from end time angle
+     */
     val endTime = remember(key1 = endAngleAtan.value) {
         derivedStateOf {
             var angle = endAngleAtan.value + Math.toDegrees(PI / 2)
@@ -197,7 +253,6 @@ fun TimeRangePicker(
             alpha = 0.5f
         )
         for (i in 0..23) {
-            // 時計の針を描画
             val radius = size.width / 2 * 0.8f
             val angle =  i * (360 / 24) // 360度を24分割
             val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
@@ -233,7 +288,6 @@ fun TimeRangePicker(
                     strokeWidth = 3f
                 )
             }
-            // 分針を描画
             for (j in 1..5) {
                 if(i % 6 == 5 && j == 5) continue
                 if(i % 6 == 0 && j == 1) continue
@@ -301,7 +355,6 @@ fun TimeRangePicker(
             }
         }
 
-        // time を表示
         drawIntoCanvas {
             it.nativeCanvas.drawText(
                 "開始時間",
@@ -348,7 +401,12 @@ fun TimeRangePicker(
 }
 
 /**
- * 時間から座標を取得
+ * Calculate offset from time
+ * @param centerX Center X
+ * @param centerY Center Y
+ * @param hour Hour
+ * @param minute Minute
+ * @return Offset
  */
 private fun getOffsetByTime(centerX: Float, centerY: Float, hour: Float, minute: Float): Offset {
     val angle = (hour * 360 / 24) + (minute * (360 / 24 / 60))
