@@ -220,12 +220,12 @@ fun TimeRangePicker(
                 }
             } else {
                 drawLine(
-                    color = androidx.compose.ui.graphics.Color.Black,
-                    start = androidx.compose.ui.geometry.Offset(
+                    color = Color.Black,
+                    start = Offset(
                         x = startX,
                         y = startY
                     ),
-                    end = androidx.compose.ui.geometry.Offset(
+                    end = Offset(
                         x = endX,
                         y = endY
                     ),
@@ -245,12 +245,12 @@ fun TimeRangePicker(
                 val endX = (centerX + radius * 0.95 * Math.cos(radian)).toFloat()
                 val endY = (centerY + radius * 0.95 * Math.sin(radian)).toFloat()
                 drawLine(
-                    color = androidx.compose.ui.graphics.Color.Gray,
-                    start = androidx.compose.ui.geometry.Offset(
+                    color = Color.Gray,
+                    start = Offset(
                         x = startX,
                         y = startY
                     ),
-                    end = androidx.compose.ui.geometry.Offset(
+                    end = Offset(
                         x = endX,
                         y = endY
                     ),
