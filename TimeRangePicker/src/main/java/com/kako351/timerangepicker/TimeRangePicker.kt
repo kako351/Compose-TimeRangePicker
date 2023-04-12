@@ -137,26 +137,26 @@ fun TimeRangePicker(
     /**
      * Calculate end time angle from xy end time offset
      */
-    val endAngleAtan = remember(key1 = endTimeDragOffsetX, key2 = endTimeDragOffsetY) {
+    val endTimeAngle = remember(key1 = endTimeDragOffsetX, key2 = endTimeDragOffsetY) {
         derivedStateOf { Math.toDegrees(Math.atan2((endTimeDragOffsetY - centerY).toDouble(), (endTimeDragOffsetX - centerX).toDouble())).toFloat() }
     }
     /**
      * Calculate end time x offset from angle
      */
-    val endAngleX = remember(key1 = endAngleAtan.value, key2 = centerX) {
+    val endAngleX = remember(key1 = endTimeAngle.value, key2 = centerX) {
         derivedStateOf {
             val radius = centerX - 50f
-            val angle = Math.toRadians(endAngleAtan.value.toDouble())
+            val angle = Math.toRadians(endTimeAngle.value.toDouble())
             (radius * Math.cos(angle)).toFloat() + centerX
         }
     }
     /**
      * Calculate end time y offset from angle
      */
-    val endAngleY = remember(key1 = endAngleAtan.value, key2 = centerY) {
+    val endAngleY = remember(key1 = endTimeAngle.value, key2 = centerY) {
         derivedStateOf {
             val radius = centerY - 50f
-            val angle = Math.toRadians(endAngleAtan.value.toDouble())
+            val angle = Math.toRadians(endTimeAngle.value.toDouble())
             (radius * Math.sin(angle)).toFloat() + centerY
         }
     }
@@ -176,9 +176,9 @@ fun TimeRangePicker(
     /**
      * Calculate display end time text from end time angle
      */
-    val endTime = remember(key1 = endAngleAtan.value) {
+    val endTime = remember(key1 = endTimeAngle.value) {
         derivedStateOf {
-            var angle = endAngleAtan.value + Math.toDegrees(PI / 2)
+            var angle = endTimeAngle.value + Math.toDegrees(PI / 2)
             if (angle < 0) angle += 360f
             if (angle >= 360f) angle -= 360f
             val hour = (angle / 15).toInt()
@@ -316,8 +316,8 @@ fun TimeRangePicker(
         }
 
         val startAngle = startTimeAngle.value
-        var sweepAngle = endAngleAtan.value - startTimeAngle.value
-        if(endAngleAtan.value < startTimeAngle.value) sweepAngle += 360f
+        var sweepAngle = endTimeAngle.value - startTimeAngle.value
+        if(endTimeAngle.value < startTimeAngle.value) sweepAngle += 360f
         drawArc(
             color = Color(0xFF2196F3),
             startAngle = startAngle,
