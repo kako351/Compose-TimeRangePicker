@@ -8,10 +8,10 @@ TimeRangePicker created in Jetpack Compose.
 
 ```kotlin
 TimeRangePicker(
-    startHour = 0f,
-    startMinute = 0f,
-    endHour = 12f,
-    endMinute = 0f,
+    startHour = 0,
+    startMinute = 0,
+    endHour = 12,
+    endMinute = 0,
 ) { startHour, startMinute, endHour, endMinute ->
     // Do something
 }
