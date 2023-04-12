@@ -133,6 +133,41 @@ fun TimeRangePicker(
             (radius * Math.sin(angle)).toFloat() + centerY
         }
     }
+    /**
+     * Calculate start time degrees from angle
+     */
+    val startTimeDegrees = remember(key1 = startTimeDragAngle.value) {
+        derivedStateOf {
+            var angle = startTimeDragAngle.value + Math.toDegrees(PI / 2)
+            if (angle < 0) angle += 360f
+            if (angle >= 360f) angle -= 360f
+            angle
+        }
+    }
+    /**
+     * Calculate start hour from start time angle
+     */
+    val startHour = remember(key1 = startTimeDegrees.value) {
+        derivedStateOf {
+            (startTimeDegrees.value / 15).toInt()
+        }
+    }
+    /**
+     * Calculate start minute from start time angle
+     */
+    val startMinute = remember(key1 = startTimeDegrees.value) {
+        derivedStateOf {
+            ((startTimeDegrees.value % 15) / 15 * 60).toInt()
+        }
+    }
+    /**
+     * Calculate display start time text from start time angle
+     */
+    val startTime = remember(key1 = startHour, key2 = startMinute) {
+        derivedStateOf {
+            "%02d:%02d".format(startHour, startMinute)
+        }
+    }
 
     /**
      * Calculate end time angle from xy end time offset
@@ -158,19 +193,6 @@ fun TimeRangePicker(
             val radius = centerY - 50f
             val angle = Math.toRadians(endTimeDragAngle.value.toDouble())
             (radius * Math.sin(angle)).toFloat() + centerY
-        }
-    }
-    /**
-     * Calculate display start time text from start time angle
-     */
-    val startTime = remember(key1 = startTimeDragAngle.value) {
-        derivedStateOf {
-            var angle = startTimeDragAngle.value + Math.toDegrees(PI / 2)
-            if (angle < 0) angle += 360f
-            if (angle >= 360f) angle -= 360f
-            val hour = (angle / 15).toInt()
-            val minute = ((angle % 15) / 15 * 60).toInt()
-            "%02d:%02d".format(hour, minute)
         }
     }
     /**
