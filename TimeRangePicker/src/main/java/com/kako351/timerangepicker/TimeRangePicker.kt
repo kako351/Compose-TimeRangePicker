@@ -44,10 +44,11 @@ import java.lang.Math.PI
 @Composable
 fun TimeRangePicker(
     modifier: Modifier = Modifier,
-    startHour: Float = 0f,
-    startMinute: Float = 0f,
-    endHour: Float = 12f,
-    endMinute: Float = 0f,
+    startHour: Int = 0,
+    startMinute: Int = 0,
+    endHour: Int = 12,
+    endMinute: Int = 0,
+    onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
     val vector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24)
     val painter = rememberVectorPainter(image = vector)
@@ -165,7 +166,7 @@ fun TimeRangePicker(
      */
     val startTime = remember(key1 = selectedStartHour.value, key2 = selectedStartMinute.value) {
         derivedStateOf {
-            "%02d:%02d".format(selectedStartHour.value, selectedStartMinute.value)
+            getDisplayTimeText(selectedStartHour.value, selectedStartMinute.value)
         }
     }
 
@@ -227,8 +228,16 @@ fun TimeRangePicker(
      */
     val endTime = remember(key1 = selectedEndHour.value, key2 = selectedEndMinute.value) {
         derivedStateOf {
-            "%02d:%02d".format(selectedEndHour.value, selectedEndMinute.value)
+            getDisplayTimeText(selectedEndHour.value, selectedEndMinute.value)
         }
+    }
+    LaunchedEffect(selectedStartHour, selectedStartMinute, selectedEndHour, selectedEndMinute) {
+        onChangedTimeRange(
+            selectedStartHour.value,
+            selectedStartMinute.value,
+            selectedEndHour.value,
+            selectedEndMinute.value
+        )
     }
     
     Canvas(
@@ -240,11 +249,11 @@ fun TimeRangePicker(
                 centerY = it.height / 2f
 
                 val defaultStartTimeOffset =
-                    getOffsetByTime(centerX, centerY, startHour, startMinute)
+                    getOffsetByTime(centerX, centerY, startHour.toFloat(), startMinute.toFloat())
                 startTimeDragOffsetX = defaultStartTimeOffset.x
                 startTimeDragOffsetY = defaultStartTimeOffset.y
 
-                val defaultEndTimeOffset = getOffsetByTime(centerX, centerY, endHour, endMinute)
+                val defaultEndTimeOffset = getOffsetByTime(centerX, centerY, endHour.toFloat(), endMinute.toFloat())
                 endTimeDragOffsetX = defaultEndTimeOffset.x
                 endTimeDragOffsetY = defaultEndTimeOffset.y
             }
@@ -462,8 +471,18 @@ private fun getOffsetByTime(centerX: Float, centerY: Float, hour: Float, minute:
     return Offset(x, y)
 }
 
+/**
+ * Display time text
+ * @param hour Int
+ * @param minute Int
+ * @return String
+ */
+private fun getDisplayTimeText(hour: Int, minute: Int): String {
+    return "%02d:%02d".format(hour, minute)
+}
+
 @Preview
 @Composable
 fun TimeRangePickerPreview() {
-    TimeRangePicker()
+    TimeRangePicker(onChangedTimeRange = {_, _, _, _ -> })
 }
