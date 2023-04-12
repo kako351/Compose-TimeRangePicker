@@ -147,7 +147,7 @@ fun TimeRangePicker(
     /**
      * Calculate start hour from start time angle
      */
-    val startHour = remember(key1 = startTimeDegrees.value) {
+    val selectedStartHour = remember(key1 = startTimeDegrees.value) {
         derivedStateOf {
             (startTimeDegrees.value / 15).toInt()
         }
@@ -155,7 +155,7 @@ fun TimeRangePicker(
     /**
      * Calculate start minute from start time angle
      */
-    val startMinute = remember(key1 = startTimeDegrees.value) {
+    val selectedStartMinute = remember(key1 = startTimeDegrees.value) {
         derivedStateOf {
             ((startTimeDegrees.value % 15) / 15 * 60).toInt()
         }
@@ -163,9 +163,9 @@ fun TimeRangePicker(
     /**
      * Calculate display start time text from start time angle
      */
-    val startTime = remember(key1 = startHour, key2 = startMinute) {
+    val startTime = remember(key1 = selectedStartHour.value, key2 = selectedStartMinute.value) {
         derivedStateOf {
-            "%02d:%02d".format(startHour, startMinute)
+            "%02d:%02d".format(selectedStartHour.value, selectedStartMinute.value)
         }
     }
 
@@ -196,16 +196,38 @@ fun TimeRangePicker(
         }
     }
     /**
-     * Calculate display end time text from end time angle
+     * Calculate end time degrees from angle
      */
-    val endTime = remember(key1 = endTimeDragAngle.value) {
+    val endTimeDegrees = remember(key1 = endTimeDragAngle.value) {
         derivedStateOf {
             var angle = endTimeDragAngle.value + Math.toDegrees(PI / 2)
             if (angle < 0) angle += 360f
             if (angle >= 360f) angle -= 360f
-            val hour = (angle / 15).toInt()
-            val minute = ((angle % 15) / 15 * 60).toInt()
-            "%02d:%02d".format(hour, minute)
+            angle
+        }
+    }
+    /**
+     * Calculate end hour from end time angle
+     */
+    val selectedEndHour = remember(key1 = endTimeDegrees.value) {
+        derivedStateOf {
+            (endTimeDegrees.value / 15).toInt()
+        }
+    }
+    /**
+     * Calculate end minute from end time angle
+     */
+    val selectedEndMinute = remember(key1 = endTimeDegrees.value) {
+        derivedStateOf {
+            ((endTimeDegrees.value % 15) / 15 * 60).toInt()
+        }
+    }
+    /**
+     * Calculate display end time text from end time angle
+     */
+    val endTime = remember(key1 = selectedEndHour.value, key2 = selectedEndMinute.value) {
+        derivedStateOf {
+            "%02d:%02d".format(selectedEndHour.value, selectedEndMinute.value)
         }
     }
     
@@ -217,7 +239,8 @@ fun TimeRangePicker(
                 centerX = it.width / 2f
                 centerY = it.height / 2f
 
-                val defaultStartTimeOffset = getOffsetByTime(centerX, centerY, startHour, startMinute)
+                val defaultStartTimeOffset =
+                    getOffsetByTime(centerX, centerY, startHour, startMinute)
                 startTimeDragOffsetX = defaultStartTimeOffset.x
                 startTimeDragOffsetY = defaultStartTimeOffset.y
 
