@@ -133,37 +133,41 @@ fun TimeRangePicker(
     /**
      * Calculate start time angle from xy start time offset
      */
-    val startTimeDragAngle = remember(key1 = startTimeDragOffset, key2 = centerOffset) {
+    val startTimeDragAngle by remember(key1 = startTimeDragOffset, key2 = centerOffset) {
         derivedStateOf {
             startTimeDragOffset.toDegrees(centerOffset)
+        }
+    }
+
+    val startAngle by remember(key1 = centerOffset, key2 = startTimeDragAngle) {
+        derivedStateOf {
+            centerOffset.byDegrees(startTimeDragAngle)
         }
     }
     /**
      * Calculate start time x offset from angle
      */
-    val startAngleX = remember(key1 = startTimeDragAngle.value, key2 = centerX) {
+    val startAngleX = remember(key1 = startAngle) {
         derivedStateOf {
-            val radius = centerX - 50f
-            val angle = Math.toRadians(startTimeDragAngle.value.toDouble())
-            (radius * Math.cos(angle)).toFloat() + centerX
+//            val radius = centerOffset.x - 50f
+            startAngle.x
         }
     }
     /**
      * Calculate start time y offset from angle
      */
-    val startAngleY = remember(key1 = startTimeDragAngle.value, key2 = centerY) {
+    val startAngleY = remember(key1 = startAngle) {
         derivedStateOf {
-            val radius = centerY - 50f
-            val angle = Math.toRadians(startTimeDragAngle.value.toDouble())
-            (radius * Math.sin(angle)).toFloat() + centerY
+//            val radius = centerY - 50f
+            startAngle.y
         }
     }
     /**
      * Calculate start time degrees from angle
      */
-    val startTimeDegrees = remember(key1 = startTimeDragAngle.value) {
+    val startTimeDegrees = remember(key1 = startTimeDragAngle) {
         derivedStateOf {
-            var angle = startTimeDragAngle.value + Math.toDegrees(PI / 2)
+            var angle = startTimeDragAngle + Math.toDegrees(PI / 2)
             if (angle < 0) angle += 360f
             if (angle >= 360f) angle -= 360f
             angle
@@ -387,9 +391,9 @@ fun TimeRangePicker(
             }
         }
 
-        val startAngle = startTimeDragAngle.value
-        var sweepAngle = endTimeDragAngle.value - startTimeDragAngle.value
-        if(endTimeDragAngle.value < startTimeDragAngle.value) sweepAngle += 360f
+        val startAngle = startTimeDragAngle
+        var sweepAngle = endTimeDragAngle.value - startTimeDragAngle
+        if(endTimeDragAngle.value < startTimeDragAngle) sweepAngle += 360f
         drawArc(
             color = Color(0xFF2196F3),
             startAngle = startAngle,

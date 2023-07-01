@@ -31,6 +31,18 @@ interface TimeRangePickerOffset {
     fun toDegrees(other: TimeRangePickerOffset) =
         Math.toDegrees(Math.atan2((this.y - other.y).toDouble(), (this.x - other.y).toDouble())).toFloat()
 
+    /**
+     * Calculate offset by degrees
+     * @param degrees Float
+     * @return TimeRangePickerOffset
+     */
+    fun byDegrees(degrees: Float): TimeRangePickerOffset {
+        val angle = Math.toRadians(degrees.toDouble())
+        val x = (this.x * Math.cos(angle)).toFloat() + this.x
+        val y = (this.y * Math.sin(angle)).toFloat() + this.y
+        return Offset(x = x, y = y)
+    }
+
 
     @Immutable
     data class Offset(override val x: Float = 0f, override val y: Float = 0f): TimeRangePickerOffset
