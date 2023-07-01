@@ -43,6 +43,13 @@ interface TimeRangePickerOffset {
         return Offset(x = x, y = y)
     }
 
+    fun toAngle(other: TimeRangePickerOffset): Double {
+        var angle = this.toDegrees(other) + Math.toDegrees(TimeRangePickerAngle.RADIAN)
+        if (angle < TimeRangePickerAngle.Zero) angle += TimeRangePickerAngle.MAX_ANGLE
+        if (angle >= TimeRangePickerAngle.MAX_ANGLE) angle -= TimeRangePickerAngle.MAX_ANGLE
+        return angle
+    }
+
 
     @Immutable
     data class Offset(override val x: Float = 0f, override val y: Float = 0f): TimeRangePickerOffset

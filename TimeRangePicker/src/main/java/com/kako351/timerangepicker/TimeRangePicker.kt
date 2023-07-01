@@ -165,12 +165,9 @@ fun TimeRangePicker(
     /**
      * Calculate start time degrees from angle
      */
-    val startTimeDegrees = remember(key1 = startTimeDragAngle) {
+    val startTimeDegrees = remember(key1 = startTimeDragOffset, key2 = centerOffset) {
         derivedStateOf {
-            var angle = startTimeDragAngle + Math.toDegrees(PI / 2)
-            if (angle < 0) angle += 360f
-            if (angle >= 360f) angle -= 360f
-            angle
+            startTimeDragOffset.toAngle(centerOffset)
         }
     }
     /**
