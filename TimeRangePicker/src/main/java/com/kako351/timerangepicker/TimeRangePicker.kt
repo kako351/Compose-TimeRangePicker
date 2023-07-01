@@ -53,6 +53,10 @@ fun TimeRangePicker(
     val vector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24)
     val painter = rememberVectorPainter(image = vector)
 
+    var centerOffset by remember {
+        mutableStateOf(com.kako351.timerangepicker.Offset.CenterOffset())
+    }
+
     /**
      * Radius of area to accept drag gesture.
      */
@@ -61,14 +65,18 @@ fun TimeRangePicker(
     /**
      * Center x Offset of the circle.
      */
-    var centerX by remember {
-        mutableStateOf(0f)
+    val centerX by remember(centerOffset) {
+        derivedStateOf {
+            centerOffset.x
+        }
     }
     /**
      * Center y Offset of the circle.
      */
-    var centerY by remember {
-        mutableStateOf(0f)
+    val centerY by remember(centerOffset) {
+        derivedStateOf {
+            centerOffset.y
+        }
     }
     /**
      * Dragged start time offset x
@@ -245,15 +253,15 @@ fun TimeRangePicker(
             .fillMaxWidth()
             .aspectRatio(1f)
             .onSizeChanged {
-                centerX = it.width / 2f
-                centerY = it.height / 2f
+                centerOffset = com.kako351.timerangepicker.Offset.CenterOffset(it.width / 2f, it.height / 2f)
 
                 val defaultStartTimeOffset =
                     getOffsetByTime(centerX, centerY, startHour.toFloat(), startMinute.toFloat())
                 startTimeDragOffsetX = defaultStartTimeOffset.x
                 startTimeDragOffsetY = defaultStartTimeOffset.y
 
-                val defaultEndTimeOffset = getOffsetByTime(centerX, centerY, endHour.toFloat(), endMinute.toFloat())
+                val defaultEndTimeOffset =
+                    getOffsetByTime(centerX, centerY, endHour.toFloat(), endMinute.toFloat())
                 endTimeDragOffsetX = defaultEndTimeOffset.x
                 endTimeDragOffsetY = defaultEndTimeOffset.y
             }
@@ -486,3 +494,4 @@ private fun getDisplayTimeText(hour: Int, minute: Int): String {
 fun TimeRangePickerPreview() {
     TimeRangePicker(onChangedTimeRange = {_, _, _, _ -> })
 }
+
