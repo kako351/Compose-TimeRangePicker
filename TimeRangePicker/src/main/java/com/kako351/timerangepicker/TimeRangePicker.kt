@@ -1,6 +1,7 @@
 package com.kako351.timerangepicker
 
 import android.graphics.Paint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.aspectRatio
@@ -165,33 +166,32 @@ fun TimeRangePicker(
     /**
      * Calculate start time degrees from angle
      */
-    val startTimeDegrees = remember(key1 = startTimeDragOffset, key2 = centerOffset) {
+    val startTimeDegrees = remember(key1 = startAngle, key2 = centerOffset) {
         derivedStateOf {
-            startTimeDragOffset.toAngle(centerOffset)
+            startAngle.toAngle(centerOffset)
         }
     }
+
+    val startTime by remember(startTimeDegrees) {
+        derivedStateOf {
+            Time.TimeRangePicker24Time.createByDegrees(startTimeDegrees.value)
+        }
+    }
+
     /**
      * Calculate start hour from start time angle
      */
-    val selectedStartHour = remember(key1 = startTimeDegrees.value) {
+    val selectedStartHour = remember(key1 = startTime) {
         derivedStateOf {
-            (startTimeDegrees.value / 15).toInt()
+            startTime.hour
         }
     }
     /**
      * Calculate start minute from start time angle
      */
-    val selectedStartMinute = remember(key1 = startTimeDegrees.value) {
+    val selectedStartMinute = remember(key1 = startTime) {
         derivedStateOf {
-            ((startTimeDegrees.value % 15) / 15 * 60).toInt()
-        }
-    }
-    /**
-     * Calculate display start time text from start time angle
-     */
-    val startTime = remember(key1 = selectedStartHour.value, key2 = selectedStartMinute.value) {
-        derivedStateOf {
-            getDisplayTimeText(selectedStartHour.value, selectedStartMinute.value)
+            startTime.minute
         }
     }
 
@@ -257,12 +257,16 @@ fun TimeRangePicker(
         }
     }
     LaunchedEffect(selectedStartHour, selectedStartMinute, selectedEndHour, selectedEndMinute) {
+        Log.i("time", "start hour: ${selectedStartHour.value}, start minute: ${selectedStartMinute.value}, end hour: ${selectedEndHour.value}, end minute: ${selectedEndMinute.value}")
         onChangedTimeRange(
             selectedStartHour.value,
             selectedStartMinute.value,
             selectedEndHour.value,
             selectedEndMinute.value
         )
+    }
+    LaunchedEffect(startAngleX, startAngleY, endAngleX, endAngleY) {
+        Log.i("time", "start x: ${startAngleX.value}, start y: ${startAngleY.value}, end x: ${endAngleX.value}, end y: ${endAngleY.value}")
     }
     
     Canvas(
@@ -272,11 +276,15 @@ fun TimeRangePicker(
             .onSizeChanged {
                 centerOffset = TimeRangePickerOffset.Offset(it.width / 2f, it.height / 2f)
 
-                val defaultStartTimeOffset = centerOffset.byTime(startHour.toFloat(), startMinute.toFloat())
-                startTimeDragOffset = TimeRangePickerOffset.Offset(defaultStartTimeOffset.x, defaultStartTimeOffset.y)
+                val defaultStartTimeOffset =
+                    centerOffset.byTime(startHour.toFloat(), startMinute.toFloat())
+                startTimeDragOffset =
+                    TimeRangePickerOffset.Offset(defaultStartTimeOffset.x, defaultStartTimeOffset.y)
 
-                val defaultEndTimeOffset = centerOffset.byTime(endHour.toFloat(), endMinute.toFloat())
-                endTimeDragOffset = TimeRangePickerOffset.Offset(defaultEndTimeOffset.x, defaultEndTimeOffset.y)
+                val defaultEndTimeOffset =
+                    centerOffset.byTime(endHour.toFloat(), endMinute.toFloat())
+                endTimeDragOffset =
+                    TimeRangePickerOffset.Offset(defaultEndTimeOffset.x, defaultEndTimeOffset.y)
             }
             .pointerInput(Unit) {
                 detectDragGestures(
@@ -298,9 +306,11 @@ fun TimeRangePicker(
                         if (!allowStartTimeDrag && !allowEndTimeDrag) return@detectDragGestures
                         change.consume()
                         if (allowStartTimeDrag) {
-                            startTimeDragOffset = TimeRangePickerOffset.Offset(change.position.x, change.position.y)
+                            startTimeDragOffset =
+                                TimeRangePickerOffset.Offset(change.position.x, change.position.y)
                         } else if (allowEndTimeDrag) {
-                            endTimeDragOffset = TimeRangePickerOffset.Offset(change.position.x, change.position.y)
+                            endTimeDragOffset =
+                                TimeRangePickerOffset.Offset(change.position.x, change.position.y)
                         }
                     }
                 )
@@ -440,7 +450,7 @@ fun TimeRangePicker(
                 }
             )
             it.nativeCanvas.drawText(
-                startTime.value,
+                startTime.formatText,
                 centerX,
                 centerY - (centerY / 10),
                 Paint().apply {
