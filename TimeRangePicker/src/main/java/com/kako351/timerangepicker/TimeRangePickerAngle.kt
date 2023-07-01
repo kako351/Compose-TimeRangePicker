@@ -6,6 +6,6 @@ object TimeRangePickerAngle {
     val Zero = 0f
     val MAX_ANGLE = 360f
     val RADIAN = PI / 2
-    val HOUR_ANGLE = 360f / 24f
-    val MINUTE_ANGLE = HOUR_ANGLE / 60f
+    val ANGLE_24HOUR = 360f / 24f
+    val ANGLE_24HOUR_MINUTE = ANGLE_24HOUR / 60f
 }

@@ -15,7 +15,7 @@ interface TimeRangePickerOffset {
      * @return TimeRangePickerOffset
      */
     fun byTime(hour: Float, minute: Float): TimeRangePickerOffset {
-        val angle = (hour * TimeRangePickerAngle.HOUR_ANGLE) + (minute * TimeRangePickerAngle.MINUTE_ANGLE)
+        val angle = (hour * TimeRangePickerAngle.ANGLE_24HOUR) + (minute * TimeRangePickerAngle.ANGLE_24HOUR_MINUTE)
         val radian = Math.toRadians(angle.toDouble()) - TimeRangePickerAngle.RADIAN
         val radius = this.x
         val x = (this.x + radius * Math.cos(radian)).toFloat()
