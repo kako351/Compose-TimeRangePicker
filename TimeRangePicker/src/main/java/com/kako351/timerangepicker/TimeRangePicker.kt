@@ -44,17 +44,25 @@ import java.lang.Math.PI
 @Composable
 fun TimeRangePicker(
     modifier: Modifier = Modifier,
-    startHour: Int = 0,
-    startMinute: Int = 0,
-    endHour: Int = 12,
-    endMinute: Int = 0,
+    startHour: Int = TimeRangePickerDateTime.Zero,
+    startMinute: Int = TimeRangePickerDateTime.Zero,
+    endHour: Int = TimeRangePickerDateTime.NoonHour,
+    endMinute: Int = TimeRangePickerDateTime.Zero,
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
     val vector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24)
     val painter = rememberVectorPainter(image = vector)
 
     var centerOffset by remember {
-        mutableStateOf(com.kako351.timerangepicker.Offset.CenterOffset())
+        mutableStateOf(TimeRangePickerOffset.Offset(0f, 0f))
+    }
+
+    var startTimeDragOffset by remember {
+        mutableStateOf(TimeRangePickerOffset.Offset(0f, 0f))
+    }
+
+    var endTimeDragOffset by remember {
+        mutableStateOf(TimeRangePickerOffset.Offset(0f, 0f))
     }
 
     /**
@@ -81,26 +89,34 @@ fun TimeRangePicker(
     /**
      * Dragged start time offset x
      */
-    var startTimeDragOffsetX by remember {
-        mutableStateOf(0f)
+    val startTimeDragOffsetX by remember(startTimeDragOffset) {
+        derivedStateOf {
+            startTimeDragOffset.x
+        }
     }
     /**
      * Dragged start time offset y
      */
-    var startTimeDragOffsetY by remember {
-        mutableStateOf(0f)
+    val startTimeDragOffsetY by remember(startTimeDragOffset) {
+        derivedStateOf {
+            startTimeDragOffset.y
+        }
     }
     /**
      * Dragged end time offset x
      */
-    var endTimeDragOffsetX by remember {
-        mutableStateOf(0f)
+    val endTimeDragOffsetX by remember(endTimeDragOffset) {
+        derivedStateOf {
+            endTimeDragOffset.x
+        }
     }
     /**
      * Dragged end time offset y
      */
-    var endTimeDragOffsetY by remember {
-        mutableStateOf(0f)
+    val endTimeDragOffsetY by remember(endTimeDragOffset) {
+        derivedStateOf {
+            endTimeDragOffset.y
+        }
     }
     /**
      * Allow dragging of start time
@@ -117,9 +133,9 @@ fun TimeRangePicker(
     /**
      * Calculate start time angle from xy start time offset
      */
-    val startTimeDragAngle = remember(key1 = startTimeDragOffsetX, key2 = startTimeDragOffsetY) {
+    val startTimeDragAngle = remember(key1 = startTimeDragOffset, key2 = centerOffset) {
         derivedStateOf {
-            Math.toDegrees(Math.atan2((startTimeDragOffsetY - centerY).toDouble(), (startTimeDragOffsetX - centerX).toDouble())).toFloat()
+            startTimeDragOffset.toDegrees(centerOffset)
         }
     }
     /**
@@ -253,17 +269,13 @@ fun TimeRangePicker(
             .fillMaxWidth()
             .aspectRatio(1f)
             .onSizeChanged {
-                centerOffset = com.kako351.timerangepicker.Offset.CenterOffset(it.width / 2f, it.height / 2f)
+                centerOffset = TimeRangePickerOffset.Offset(it.width / 2f, it.height / 2f)
 
-                val defaultStartTimeOffset =
-                    getOffsetByTime(centerX, centerY, startHour.toFloat(), startMinute.toFloat())
-                startTimeDragOffsetX = defaultStartTimeOffset.x
-                startTimeDragOffsetY = defaultStartTimeOffset.y
+                val defaultStartTimeOffset = centerOffset.byTime(startHour.toFloat(), startMinute.toFloat())
+                startTimeDragOffset = TimeRangePickerOffset.Offset(defaultStartTimeOffset.x, defaultStartTimeOffset.y)
 
-                val defaultEndTimeOffset =
-                    getOffsetByTime(centerX, centerY, endHour.toFloat(), endMinute.toFloat())
-                endTimeDragOffsetX = defaultEndTimeOffset.x
-                endTimeDragOffsetY = defaultEndTimeOffset.y
+                val defaultEndTimeOffset = centerOffset.byTime(endHour.toFloat(), endMinute.toFloat())
+                endTimeDragOffset = TimeRangePickerOffset.Offset(defaultEndTimeOffset.x, defaultEndTimeOffset.y)
             }
             .pointerInput(Unit) {
                 detectDragGestures(
@@ -285,11 +297,9 @@ fun TimeRangePicker(
                         if (!allowStartTimeDrag && !allowEndTimeDrag) return@detectDragGestures
                         change.consume()
                         if (allowStartTimeDrag) {
-                            startTimeDragOffsetX = change.position.x
-                            startTimeDragOffsetY = change.position.y
+                            startTimeDragOffset = TimeRangePickerOffset.Offset(change.position.x, change.position.y)
                         } else if (allowEndTimeDrag) {
-                            endTimeDragOffsetX = change.position.x
-                            endTimeDragOffsetY = change.position.y
+                            endTimeDragOffset = TimeRangePickerOffset.Offset(change.position.x, change.position.y)
                         }
                     }
                 )
@@ -460,23 +470,6 @@ fun TimeRangePicker(
             )
         }
     }
-}
-
-/**
- * Calculate offset from time
- * @param centerX Center X
- * @param centerY Center Y
- * @param hour Hour
- * @param minute Minute
- * @return Offset
- */
-private fun getOffsetByTime(centerX: Float, centerY: Float, hour: Float, minute: Float): Offset {
-    val angle = (hour * 360 / 24) + (minute * (360 / 24 / 60))
-    val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
-    val radius = centerX
-    val x = (centerX + radius * Math.cos(radian)).toFloat()
-    val y = (centerY + radius * Math.sin(radian)).toFloat()
-    return Offset(x, y)
 }
 
 /**
