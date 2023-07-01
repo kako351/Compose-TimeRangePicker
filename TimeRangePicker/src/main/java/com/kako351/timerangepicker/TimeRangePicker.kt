@@ -88,38 +88,6 @@ fun TimeRangePicker(
         }
     }
     /**
-     * Dragged start time offset x
-     */
-    val startTimeDragOffsetX by remember(startTimeDragOffset) {
-        derivedStateOf {
-            startTimeDragOffset.x
-        }
-    }
-    /**
-     * Dragged start time offset y
-     */
-    val startTimeDragOffsetY by remember(startTimeDragOffset) {
-        derivedStateOf {
-            startTimeDragOffset.y
-        }
-    }
-    /**
-     * Dragged end time offset x
-     */
-    val endTimeDragOffsetX by remember(endTimeDragOffset) {
-        derivedStateOf {
-            endTimeDragOffset.x
-        }
-    }
-    /**
-     * Dragged end time offset y
-     */
-    val endTimeDragOffsetY by remember(endTimeDragOffset) {
-        derivedStateOf {
-            endTimeDragOffset.y
-        }
-    }
-    /**
      * Allow dragging of start time
      */
     var allowStartTimeDrag by remember {
@@ -253,16 +221,12 @@ fun TimeRangePicker(
     }
 
     LaunchedEffect(selectedStartHour, selectedStartMinute, selectedEndHour, selectedEndMinute) {
-        Log.i("time", "start hour: ${selectedStartHour.value}, start minute: ${selectedStartMinute.value}, end hour: ${selectedEndHour.value}, end minute: ${selectedEndMinute.value}")
         onChangedTimeRange(
             selectedStartHour.value,
             selectedStartMinute.value,
             selectedEndHour.value,
             selectedEndMinute.value
         )
-    }
-    LaunchedEffect(startAngleX, startAngleY, endAngleX, endAngleY) {
-        Log.i("time", "start x: ${startAngleX.value}, start y: ${startAngleY.value}, end x: ${endAngleX.value}, end y: ${endAngleY.value}")
     }
     
     Canvas(
