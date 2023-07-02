@@ -86,9 +86,6 @@ fun TimeRangePicker(
     rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
-    val vector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24)
-    val painter = rememberVectorPainter(image = vector)
-
     var centerOffset: TimeRangePickerOffset by remember {
         mutableStateOf(TimeRangePickerOffset.Default())
     }
@@ -233,23 +230,6 @@ fun TimeRangePicker(
 
         DrawClock24Hour(centerOffset)
 
-        translate(startAngle.x - (painter.intrinsicSize.width / 2), startAngle.y - (painter.intrinsicSize.height / 2.25f)) {
-            with(painter) {
-                draw(
-                    painter.intrinsicSize,
-                    colorFilter = ColorFilter.tint(Color(0xFFFFFFFF)),
-                )
-            }
-        }
-
-        translate(endAngle.x - (painter.intrinsicSize.width / 2), endAngle.y - (painter.intrinsicSize.height / 1.75f)) {
-            with(painter) {
-                draw(
-                    painter.intrinsicSize,
-                    colorFilter = ColorFilter.tint(Color(0xFFFFFFFF)),
-                )
-            }
-        }
         DrawDigitalClockText(
             centerOffset = centerOffset,
             startTime = startTime,
@@ -259,49 +239,9 @@ fun TimeRangePicker(
 }
 
 private fun DrawScope.DrawClockArc(
-    centerOffset: TimeRangePickerOffset,
-    radius: Float,
-    color: Color,
-    strokeWidth: Float,
-    alpha: Float = 0.5f,
-) {
-    DrawClockArc(
-        RangeBarStyle(
-            centerOffset = centerOffset,
-            radius = radius,
-            color = color,
-            width = strokeWidth,
-            alpha = alpha
-        )
-    )
-}
-
-private fun DrawScope.DrawClockArc(
     style: TimeRangePickerRangeBarStyle
 ) {
     DrawArc(style = style)
-}
-
-private fun DrawScope.DrawTimeRangeArc(
-    centerOffset: TimeRangePickerOffset,
-    startTimeDragAngle: Float,
-    endTimeDragAngle: Float,
-    radius: Float,
-    color: Color,
-    strokeWidth: Float,
-    cap: StrokeCap = StrokeCap.Round,
-) {
-    DrawTimeRangeArc(
-        style = RangeBarStyle(
-            centerOffset = centerOffset,
-            radius = radius,
-            color = color,
-            width = strokeWidth,
-            cap = cap
-        ),
-        startTimeDragAngle = startTimeDragAngle,
-        endTimeDragAngle = endTimeDragAngle
-    )
 }
 
 private fun DrawScope.DrawTimeRangeArc(
