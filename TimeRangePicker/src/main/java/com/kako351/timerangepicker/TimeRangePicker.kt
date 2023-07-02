@@ -69,27 +69,6 @@ fun TimeRangePicker(
     }
 
     /**
-     * Radius of area to accept drag gesture.
-     */
-    val dragStartAreaRadius = 100f
-
-    /**
-     * Center x Offset of the circle.
-     */
-    val centerX by remember(centerOffset) {
-        derivedStateOf {
-            centerOffset.x
-        }
-    }
-    /**
-     * Center y Offset of the circle.
-     */
-    val centerY by remember(centerOffset) {
-        derivedStateOf {
-            centerOffset.y
-        }
-    }
-    /**
      * Allow dragging of start time
      */
     var allowStartTimeDrag by remember {
@@ -149,23 +128,6 @@ fun TimeRangePicker(
     }
 
     /**
-     * Calculate start hour from start time angle
-     */
-    val selectedStartHour = remember(key1 = startTime) {
-        derivedStateOf {
-            startTime.hour
-        }
-    }
-    /**
-     * Calculate start minute from start time angle
-     */
-    val selectedStartMinute = remember(key1 = startTime) {
-        derivedStateOf {
-            startTime.minute
-        }
-    }
-
-    /**
      * Calculate end time angle from xy end time offset
      */
     val endTimeDragAngle by remember(key1 = endTimeDragOffset, key2 = centerOffset) {
@@ -205,29 +167,13 @@ fun TimeRangePicker(
             Time.TimeRangePicker24Time.createByDegrees(endTimeDegrees.value)
         }
     }
-    /**
-     * Calculate end hour from end time angle
-     */
-    val selectedEndHour = remember(key1 = endTime) {
-        derivedStateOf {
-            endTime.hour
-        }
-    }
-    /**
-     * Calculate end minute from end time angle
-     */
-    val selectedEndMinute = remember(key1 = endTime) {
-        derivedStateOf {
-            endTime.minute
-        }
-    }
 
-    LaunchedEffect(selectedStartHour, selectedStartMinute, selectedEndHour, selectedEndMinute) {
+    LaunchedEffect(startTime, endTime) {
         onChangedTimeRange(
-            selectedStartHour.value,
-            selectedStartMinute.value,
-            selectedEndHour.value,
-            selectedEndMinute.value
+            startTime.hour,
+            startTime.minute,
+            endTime.hour,
+            endTime.minute
         )
     }
     
