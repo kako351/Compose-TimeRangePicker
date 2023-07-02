@@ -6,6 +6,9 @@ sealed interface TimeRangePickerOffset {
     val x: Float
     val y: Float
 
+    private val dragStartAreaRadius: Float
+        get() = 100f
+
     /**
      * Calculate offset from time
      * @param centerX Center X
@@ -49,6 +52,9 @@ sealed interface TimeRangePickerOffset {
         if (angle >= TimeRangePickerAngle.MAX_ANGLE) angle -= TimeRangePickerAngle.MAX_ANGLE
         return angle
     }
+
+    fun inDraggableArea(x: Float, y: Float): Boolean =
+        x in (this.x - dragStartAreaRadius)..(this.x + dragStartAreaRadius) && y in (this.y - dragStartAreaRadius)..(this.y + dragStartAreaRadius)
 
 
     @Immutable

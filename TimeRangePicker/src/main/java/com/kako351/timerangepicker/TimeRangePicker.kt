@@ -241,12 +241,12 @@ fun TimeRangePicker(
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = {
-                        if (it.x in (startAngleX.value - dragStartAreaRadius)..(startAngleX.value + dragStartAreaRadius) && it.y in (startAngleY.value - dragStartAreaRadius)..(startAngleY.value + dragStartAreaRadius)) {
+                        if (startAngle.inDraggableArea(x = it.x, y = it.y)) {
                             allowStartTimeDrag = true
                             return@detectDragGestures
                         }
                         allowStartTimeDrag = false
-                        if (it.x in (endAngleX.value - dragStartAreaRadius)..(endAngleX.value + dragStartAreaRadius) && it.y in (endAngleY.value - dragStartAreaRadius)..(endAngleY.value + dragStartAreaRadius)) {
+                        if (endAngle.inDraggableArea(x = it.x, y = it.y)) {
                             allowEndTimeDrag = true
                             return@detectDragGestures
                         }
