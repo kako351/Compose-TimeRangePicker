@@ -182,13 +182,13 @@ fun TimeRangePicker(
                         change.consume()
                         if (allowStartTimeDrag) {
                             TimeRangePickerOffset.Offset(change.position.x, change.position.y).let {
-                                startTimeDragOffset = it
-                                startTime = Time.TimeRangePicker24Time.createByDegrees(it.toAngle(centerOffset))
+                                startTimeDragOffset = centerOffset.byDegrees(it.toDegrees(centerOffset))
+                                startTime = Time.TimeRangePicker24Time.createByDegrees(startTimeDragOffset.toAngle(centerOffset))
                             }
                         } else if (allowEndTimeDrag) {
                             TimeRangePickerOffset.Offset(change.position.x, change.position.y).let {
-                                endTimeDragOffset = it
-                                endTime = Time.TimeRangePicker24Time.createByDegrees(it.toAngle(centerOffset))
+                                endTimeDragOffset = centerOffset.byDegrees(it.toDegrees(centerOffset))
+                                endTime = Time.TimeRangePicker24Time.createByDegrees(endTimeDragOffset.toAngle(centerOffset))
                             }
                         }
                     }
