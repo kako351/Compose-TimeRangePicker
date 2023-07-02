@@ -1,10 +1,12 @@
 package com.kako351.timerangepicker
 
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Paint
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,9 +37,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import java.lang.Math.PI
+import java.util.Locale
 
 /**
  * TimeRangePicker is a UI component that allows the user to select a time range.
@@ -54,6 +58,8 @@ fun TimeRangePicker(
     endTime: Time,
     clockBarStyle: TimeRangePickerRangeBarStyle = Default,
     rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
+    startTimeLabel: String = stringResource(id = R.string.start_time_label),
+    endTimeLabel: String = stringResource(id = R.string.start_time_label),
     onChangedTimeRange: (startTime: Time, endTime: Time) -> Unit
 ) = TimeRangePicker(
     modifier = modifier,
@@ -63,6 +69,8 @@ fun TimeRangePicker(
     endMinute = endTime.minute,
     clockBarStyle = clockBarStyle,
     rangeBarStyle = rangeBarStyle,
+    startTimeLabel = startTimeLabel,
+    endTimeLabel = endTimeLabel,
     onChangedTimeRange = { startHour, startMinute, endHour, endMinute ->
         onChangedTimeRange(
             Time.TimeRangePicker24Time(startHour, startMinute),
@@ -89,6 +97,8 @@ fun TimeRangePicker(
     endMinute: Int = TimeRangePickerDateTime.Zero,
     clockBarStyle: TimeRangePickerRangeBarStyle = Default,
     rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
+    startTimeLabel: String = stringResource(id = R.string.start_time_label),
+    endTimeLabel: String = stringResource(id = R.string.start_time_label),
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
     var startTime: Time by rememberSaveable {
@@ -181,15 +191,25 @@ fun TimeRangePicker(
                         if (!allowStartTimeDrag && !allowEndTimeDrag) return@detectDragGestures
                         change.consume()
                         if (allowStartTimeDrag) {
-                            TimeRangePickerOffset.Offset(change.position.x, change.position.y).let {
-                                startTimeDragOffset = centerOffset.byDegrees(it.toDegrees(centerOffset))
-                                startTime = Time.TimeRangePicker24Time.createByDegrees(startTimeDragOffset.toAngle(centerOffset))
-                            }
+                            TimeRangePickerOffset
+                                .Offset(change.position.x, change.position.y)
+                                .let {
+                                    startTimeDragOffset =
+                                        centerOffset.byDegrees(it.toDegrees(centerOffset))
+                                    startTime = Time.TimeRangePicker24Time.createByDegrees(
+                                        startTimeDragOffset.toAngle(centerOffset)
+                                    )
+                                }
                         } else if (allowEndTimeDrag) {
-                            TimeRangePickerOffset.Offset(change.position.x, change.position.y).let {
-                                endTimeDragOffset = centerOffset.byDegrees(it.toDegrees(centerOffset))
-                                endTime = Time.TimeRangePicker24Time.createByDegrees(endTimeDragOffset.toAngle(centerOffset))
-                            }
+                            TimeRangePickerOffset
+                                .Offset(change.position.x, change.position.y)
+                                .let {
+                                    endTimeDragOffset =
+                                        centerOffset.byDegrees(it.toDegrees(centerOffset))
+                                    endTime = Time.TimeRangePicker24Time.createByDegrees(
+                                        endTimeDragOffset.toAngle(centerOffset)
+                                    )
+                                }
                         }
                     }
                 )
@@ -222,7 +242,9 @@ fun TimeRangePicker(
         DrawDigitalClockText(
             centerOffset = centerOffset,
             startTime = startTime,
-            endTime = endTime
+            endTime = endTime,
+            startTimeLabel = startTimeLabel,
+            endTimeLabel = endTimeLabel
         )
     }
 }
@@ -332,11 +354,13 @@ private fun DrawScope.DrawClock24Hour(
 private fun DrawScope.DrawDigitalClockText(
     centerOffset: TimeRangePickerOffset,
     startTime: Time,
-    endTime: Time
+    endTime: Time,
+    startTimeLabel: String,
+    endTimeLabel: String
 ) {
     drawIntoCanvas {
         it.nativeCanvas.drawText(
-            "開始時間",
+            startTimeLabel,
             centerOffset.x,
             centerOffset.y - ((centerOffset.y / 10) * 3),
             Paint().apply {
@@ -356,7 +380,7 @@ private fun DrawScope.DrawDigitalClockText(
             }
         )
         it.nativeCanvas.drawText(
-            "終了時間",
+            endTimeLabel,
             centerOffset.x,
             centerOffset.y + ((centerOffset.y / 10) * 1),
             Paint().apply {
