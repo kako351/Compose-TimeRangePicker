@@ -57,6 +57,7 @@ fun TimeRangePicker(
     endHour = endTime.hour,
     endMinute = endTime.minute,
     clockBarStyle = clockBarStyle,
+    rangeBarStyle = rangeBarStyle,
     onChangedTimeRange = { startHour, startMinute, endHour, endMinute ->
         onChangedTimeRange(
             Time.TimeRangePicker24Time(startHour, startMinute),
