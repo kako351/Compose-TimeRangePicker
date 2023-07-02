@@ -34,6 +34,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import java.lang.Math.PI
 
+/**
+ * TimeRangePicker is a UI component that allows the user to select a time range.
+ * It represents a selected time range between the start and end times.
+ * @property modifier Modifier to be applied to the layout.
+ * @property startTime The start time of the time range.
+ * @property endTime The end time of the time range.
+ * @property onChangedTimeRange Callback that is invoked when the time range is changed.
+ */
 @Composable
 fun TimeRangePicker(
     modifier: Modifier = Modifier,
