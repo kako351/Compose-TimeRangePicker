@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 
-sealed interface TimeRangePickerRangeBarStyle {
+interface TimeRangePickerRangeBarStyle {
     val centerOffset: TimeRangePickerOffset
         get() = TimeRangePickerOffset.Offset(x = 0f, y = 0f)
 
