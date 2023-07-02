@@ -54,16 +54,16 @@ fun TimeRangePicker(
     val vector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24)
     val painter = rememberVectorPainter(image = vector)
 
-    var centerOffset by remember {
-        mutableStateOf(TimeRangePickerOffset.Offset(0f, 0f))
+    var centerOffset: TimeRangePickerOffset by remember {
+        mutableStateOf(TimeRangePickerOffset.Default())
     }
 
-    var startTimeDragOffset by remember {
-        mutableStateOf(TimeRangePickerOffset.Offset(0f, 0f))
+    var startTimeDragOffset: TimeRangePickerOffset by remember {
+        mutableStateOf(TimeRangePickerOffset.Default())
     }
 
     var endTimeDragOffset: TimeRangePickerOffset by remember {
-        mutableStateOf(TimeRangePickerOffset.Offset(0f, 0f))
+        mutableStateOf(TimeRangePickerOffset.Default())
     }
 
     /**

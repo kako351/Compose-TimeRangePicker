@@ -2,7 +2,7 @@ package com.kako351.timerangepicker
 
 import androidx.compose.runtime.Immutable
 
-interface TimeRangePickerOffset {
+sealed interface TimeRangePickerOffset {
     val x: Float
     val y: Float
 
@@ -52,5 +52,8 @@ interface TimeRangePickerOffset {
 
 
     @Immutable
-    data class Offset(override val x: Float = 0f, override val y: Float = 0f): TimeRangePickerOffset
+    data class Offset(override val x: Float, override val y: Float): TimeRangePickerOffset
+
+    @Immutable
+    data class Default(override val x: Float = 0f, override val y: Float = 0f): TimeRangePickerOffset
 }
