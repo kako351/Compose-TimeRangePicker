@@ -267,7 +267,7 @@ private fun DrawScope.DrawClock24Hour(
 ) {
     for (i in 0..23) {
         val radius = size.width / 2 * 0.8f
-        val angle =  i * (360 / 24) // 360度を24分割
+        val angle =  i * TimeRangePickerAngle.ANGLE_24HOUR // 360度を24分割
         val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
         val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
         val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
@@ -305,7 +305,7 @@ private fun DrawScope.DrawClock24Hour(
             if(i % 6 == 5 && j == 5) continue
             if(i % 6 == 0 && j == 1) continue
             // 分針を描画
-            val minuteAngle = angle + (j * (360f / 24 / 6))  // 360度を24分割
+            val minuteAngle = angle + (j * (TimeRangePickerAngle.ANGLE_24HOUR / 6))  // 360度を24分割
             val radian = Math.toRadians(minuteAngle.toDouble())
             val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
             val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
