@@ -1,10 +1,12 @@
 package com.kako351.timerangepicker
 
+import android.content.res.Configuration
 import android.graphics.Paint
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,6 +14,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -29,7 +32,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import java.lang.Math.PI
@@ -86,28 +91,28 @@ fun TimeRangePicker(
     rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
-    var centerOffset: TimeRangePickerOffset by remember {
+    var centerOffset: TimeRangePickerOffset by rememberSaveable {
         mutableStateOf(TimeRangePickerOffset.Default())
     }
 
-    var startTimeDragOffset: TimeRangePickerOffset by remember {
-        mutableStateOf(TimeRangePickerOffset.Default())
+    var startTimeDragOffset: TimeRangePickerOffset by rememberSaveable(centerOffset) {
+        mutableStateOf(centerOffset.byTime(startHour.toFloat(), startMinute.toFloat()))
     }
 
-    var endTimeDragOffset: TimeRangePickerOffset by remember {
-        mutableStateOf(TimeRangePickerOffset.Default())
+    var endTimeDragOffset: TimeRangePickerOffset by rememberSaveable(centerOffset) {
+        mutableStateOf(centerOffset.byTime(endHour.toFloat(), endMinute.toFloat()))
     }
 
     /**
      * Allow dragging of start time
      */
-    var allowStartTimeDrag by remember {
+    var allowStartTimeDrag by rememberSaveable {
         mutableStateOf(false)
     }
     /**
      * Allow dragging of end time
      */
-    var allowEndTimeDrag by remember {
+    var allowEndTimeDrag by rememberSaveable {
         mutableStateOf(false)
     }
     /**
@@ -172,15 +177,18 @@ fun TimeRangePicker(
             endTime.minute
         )
     }
-    
+
     Canvas(
         modifier = modifier
-            .fillMaxWidth()
+            .then(
+                when(LocalConfiguration.current.orientation) {
+                    Configuration.ORIENTATION_LANDSCAPE -> Modifier.fillMaxHeight()
+                    else -> Modifier.fillMaxWidth()
+                }
+            )
             .aspectRatio(1f)
             .onSizeChanged {
                 centerOffset = TimeRangePickerOffset.Offset(it.width / 2f, it.height / 2f)
-                startTimeDragOffset = centerOffset.byTime(startHour.toFloat(), startMinute.toFloat())
-                endTimeDragOffset = centerOffset.byTime(endHour.toFloat(), endMinute.toFloat())
             }
             .pointerInput(Unit) {
                 detectDragGestures(
@@ -212,6 +220,12 @@ fun TimeRangePicker(
                 )
             }
     ) {
+//        drawOval(
+//            color = Color.Red,
+//            size = Size(width = 10f, height = 10f),
+//            topLeft = Offset(x = centerOffset.x, y = centerOffset.y)
+//        )
+
         val radius = size.width / 2 * 0.9f
         DrawClockArc(
             style = clockBarStyle.copy(

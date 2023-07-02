@@ -1,8 +1,11 @@
 package com.kako351.timerangepicker
 
+import android.os.Parcelable
 import androidx.compose.runtime.Immutable
+import kotlinx.android.parcel.Parcelize
 
-sealed interface TimeRangePickerOffset {
+@Parcelize
+sealed interface TimeRangePickerOffset : Parcelable {
     val x: Float
     val y: Float
 

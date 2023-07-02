@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             TimeRangePickerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+//                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     TimeRangePicker { startHour, startMinutes, endHour, endMinutes ->
