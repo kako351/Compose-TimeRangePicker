@@ -14,13 +14,11 @@ sealed interface TimeRangePickerOffset : Parcelable {
 
     /**
      * Calculate offset from time
-     * @param centerX Center X
-     * @param centerY Center Y
      * @param hour Hour
      * @param minute Minute
      * @return TimeRangePickerOffset
      */
-    fun byTime(hour: Float, minute: Float): TimeRangePickerOffset {
+    fun byTime(hour: Int, minute: Int): TimeRangePickerOffset {
         val angle = (hour * TimeRangePickerAngle.ANGLE_24HOUR) + (minute * TimeRangePickerAngle.ANGLE_24HOUR_MINUTE)
         val radian = Math.toRadians(angle.toDouble()) - TimeRangePickerAngle.RADIAN
         val radius = this.x
@@ -49,11 +47,11 @@ sealed interface TimeRangePickerOffset : Parcelable {
         return Offset(x = x, y = y)
     }
 
-    fun toAngle(other: TimeRangePickerOffset): Double {
+    fun toAngle(other: TimeRangePickerOffset): Float {
         var angle = this.toDegrees(other) + Math.toDegrees(TimeRangePickerAngle.RADIAN)
         if (angle < TimeRangePickerAngle.Zero) angle += TimeRangePickerAngle.MAX_ANGLE
         if (angle >= TimeRangePickerAngle.MAX_ANGLE) angle -= TimeRangePickerAngle.MAX_ANGLE
-        return angle
+        return angle.toFloat()
     }
 
     fun inDraggableArea(x: Float, y: Float): Boolean =
