@@ -252,9 +252,6 @@ fun TimeRangePicker(
                             return@detectDragGestures
                         }
                         allowStartTimeDrag = false
-
-                        Log.i("end", "it.x = ${it.x}, it.y = ${it.y}, endAngleX: ${endAngleX.value}, endAngleY: ${endAngleY.value}")
-
                         if (it.x in (endAngleX.value - dragStartAreaRadius)..(endAngleX.value + dragStartAreaRadius) && it.y in (endAngleY.value - dragStartAreaRadius)..(endAngleY.value + dragStartAreaRadius)) {
                             allowEndTimeDrag = true
                             return@detectDragGestures
@@ -442,16 +439,6 @@ fun TimeRangePicker(
             )
         }
     }
-}
-
-/**
- * Display time text
- * @param hour Int
- * @param minute Int
- * @return String
- */
-private fun getDisplayTimeText(hour: Int, minute: Int): String {
-    return "%02d:%02d".format(hour, minute)
 }
 
 @Preview
