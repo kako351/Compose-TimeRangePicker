@@ -34,6 +34,25 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import java.lang.Math.PI
 
+@Composable
+fun TimeRangePicker(
+    modifier: Modifier = Modifier,
+    startTime: Time,
+    endTime: Time,
+    onChangedTimeRange: (startTime: Time, endTime: Time) -> Unit
+) = TimeRangePicker(
+    modifier = modifier,
+    startHour = startTime.hour,
+    startMinute = startTime.minute,
+    endHour = endTime.hour,
+    endMinute = endTime.minute,
+    onChangedTimeRange = { startHour, startMinute, endHour, endMinute ->
+        onChangedTimeRange(
+            Time.TimeRangePicker24Time(startHour, startMinute),
+            Time.TimeRangePicker24Time(endHour, endMinute)
+        )
+    }
+)
 /**
  * TimeRangePicker is a UI component that allows the user to select a time range.
  * It represents a selected time range between the start and end times.
