@@ -19,6 +19,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.translate
@@ -269,108 +271,22 @@ fun TimeRangePicker(
             }
     ) {
         val radius = size.width / 2 * 0.9f
-        drawArc(
+        DrawClockArc(
+            centerOffset = centerOffset,
+            radius = radius,
             color = Color.LightGray,
-            startAngle = 0f,
-            sweepAngle = 360f,
-            useCenter = false,
-            topLeft = Offset(
-                x = centerX - radius,
-                y = centerY - radius
-            ),
-            size = Size(
-                width = radius * 2,
-                height = radius * 2
-            ),
-            style = Stroke(
-                width = 70f
-            ),
-            alpha = 0.5f
+            strokeWidth = 70f,
         )
-        for (i in 0..23) {
-            val radius = size.width / 2 * 0.8f
-            val angle =  i * (360 / 24) // 360度を24分割
-            val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
-            val startX = (centerX + radius * Math.cos(radian)).toFloat()
-            val startY = (centerY + radius * Math.sin(radian)).toFloat()
-            val endX = (centerX + radius * 0.95 * Math.cos(radian)).toFloat()
-            val endY = (centerY + radius * 0.95 * Math.sin(radian)).toFloat()
-            if(i % 6 == 0) {
-                drawIntoCanvas {
-                    it.nativeCanvas.drawText(
-                        "${i}",
-                        endX,
-                        endY + 10f,
-                        Paint().apply {
-                            color = Color.Black.toArgb()
-                            textSize = 45f
-                            textAlign = Paint.Align.CENTER
-                        }
-                    )
-                }
-            } else {
-                drawLine(
-                    color = Color.Black,
-                    start = Offset(
-                        x = startX,
-                        y = startY
-                    ),
-                    end = Offset(
-                        x = endX,
-                        y = endY
-                    ),
-                    cap = StrokeCap.Round,
-                    strokeWidth = 3f
-                )
-            }
-            for (j in 1..5) {
-                if(i % 6 == 5 && j == 5) continue
-                if(i % 6 == 0 && j == 1) continue
-                // 分針を描画
-                val minuteAngle = angle + (j * (360f / 24 / 6))  // 360度を24分割
-                val radian = Math.toRadians(minuteAngle.toDouble())
-                val startX = (centerX + radius * Math.cos(radian)).toFloat()
-                val startY = (centerY + radius * Math.sin(radian)).toFloat()
-                val endX = (centerX + radius * 0.95 * Math.cos(radian)).toFloat()
-                val endY = (centerY + radius * 0.95 * Math.sin(radian)).toFloat()
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(
-                        x = startX,
-                        y = startY
-                    ),
-                    end = Offset(
-                        x = endX,
-                        y = endY
-                    ),
-                    alpha = 0.5f,
-                    cap = StrokeCap.Round,
-                    strokeWidth = 2f
-                )
-            }
-        }
-
-        val startAngle = startTimeDragAngle
-        var sweepAngle = endTimeDragAngle - startTimeDragAngle
-        if(endTimeDragAngle < startTimeDragAngle) sweepAngle += 360f
-        drawArc(
+        DrawTimeRangeArc(
+            centerOffset = centerOffset,
+            startTimeDragAngle = startTimeDragAngle,
+            endTimeDragAngle = endTimeDragAngle,
+            radius = radius,
             color = Color(0xFF2196F3),
-            startAngle = startAngle,
-            sweepAngle = sweepAngle,
-            useCenter = false,
-            topLeft = Offset(
-                x = centerX - radius,
-                y = centerY - radius
-            ),
-            size = Size(
-                width = radius * 2,
-                height = radius * 2
-            ),
-            style = Stroke(
-                width = 70f,
-                cap = StrokeCap.Round
-            ),
+            strokeWidth = 70f,
         )
+
+        DrawClock24Hour(centerOffset)
 
         translate(startAngleX.value - (painter.intrinsicSize.width / 2), startAngleY.value - (painter.intrinsicSize.height / 2.25f)) {
             with(painter) {
@@ -389,49 +305,195 @@ fun TimeRangePicker(
                 )
             }
         }
+        DrawDigitalClockText(
+            centerOffset = centerOffset,
+            startTime = startTime,
+            endTime = endTime
+        )
+    }
+}
 
-        drawIntoCanvas {
-            it.nativeCanvas.drawText(
-                "開始時間",
-                centerX,
-                centerY - ((centerY / 10) * 3),
-                Paint().apply {
-                    color = Color.Black.toArgb()
-                    textSize = 30f
-                    textAlign = Paint.Align.CENTER
-                }
-            )
-            it.nativeCanvas.drawText(
-                startTime.formatText,
-                centerX,
-                centerY - (centerY / 10),
-                Paint().apply {
-                    color = Color.Black.toArgb()
-                    textSize = 100f
-                    textAlign = Paint.Align.CENTER
-                }
-            )
-            it.nativeCanvas.drawText(
-                "終了時間",
-                centerX,
-                centerY + ((centerY / 10) * 1),
-                Paint().apply {
-                    color = Color.Black.toArgb()
-                    textSize = 30f
-                    textAlign = Paint.Align.CENTER
-                }
-            )
-            it.nativeCanvas.drawText(
-                endTime.formatText,
-                centerX,
-                centerY + ((centerY / 10) * 3),
-                Paint().apply {
-                    color = Color.Black.toArgb()
-                    textSize = 100f
-                    textAlign = Paint.Align.CENTER
-                }
+private fun DrawScope.DrawClockArc(
+    centerOffset: TimeRangePickerOffset,
+    radius: Float,
+    color: Color,
+    strokeWidth: Float
+) {
+    DrawArc(
+        centerOffset = centerOffset,
+        radius = radius,
+        startAngle = 0f,
+        sweepAngle = 360f,
+        color = color,
+        alpha = 0.5f,
+        style = Stroke(width = strokeWidth)
+    )
+}
+
+private fun DrawScope.DrawTimeRangeArc(
+    centerOffset: TimeRangePickerOffset,
+    startTimeDragAngle: Float,
+    endTimeDragAngle: Float,
+    radius: Float,
+    color: Color,
+    strokeWidth: Float
+) {
+    val startAngle = startTimeDragAngle
+    var sweepAngle = endTimeDragAngle - startTimeDragAngle
+    if(endTimeDragAngle < startTimeDragAngle) sweepAngle += TimeRangePickerAngle.MAX_ANGLE
+    DrawArc(
+        centerOffset = centerOffset,
+        radius = radius,
+        startAngle = startAngle,
+        sweepAngle = sweepAngle,
+        color = color,
+        style = Stroke(
+            width = strokeWidth,
+            cap = StrokeCap.Round
+        ),
+    )
+}
+
+private fun DrawScope.DrawArc(
+    centerOffset: TimeRangePickerOffset,
+    radius: Float,
+    startAngle: Float,
+    sweepAngle: Float,
+    color: Color,
+    style: DrawStyle,
+    alpha: Float = 1f
+) {
+    drawArc(
+        color = color,
+        startAngle = startAngle,
+        sweepAngle = sweepAngle,
+        useCenter = false,
+        topLeft = Offset(
+            x = centerOffset.x - radius,
+            y = centerOffset.y - radius
+        ),
+        size = Size(
+            width = radius * 2,
+            height = radius * 2
+        ),
+        style = style,
+        alpha = alpha
+    )
+}
+
+private fun DrawScope.DrawClock24Hour(
+    centerOffset: TimeRangePickerOffset
+) {
+    for (i in 0..23) {
+        val radius = size.width / 2 * 0.8f
+        val angle =  i * (360 / 24) // 360度を24分割
+        val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
+        val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
+        val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
+        val endX = (centerOffset.x + radius * 0.95 * Math.cos(radian)).toFloat()
+        val endY = (centerOffset.y + radius * 0.95 * Math.sin(radian)).toFloat()
+        if(i % 6 == 0) {
+            drawIntoCanvas {
+                it.nativeCanvas.drawText(
+                    "${i}",
+                    endX,
+                    endY + 10f,
+                    Paint().apply {
+                        color = Color.Black.toArgb()
+                        textSize = 45f
+                        textAlign = Paint.Align.CENTER
+                    }
+                )
+            }
+        } else {
+            drawLine(
+                color = Color.Black,
+                start = Offset(
+                    x = startX,
+                    y = startY
+                ),
+                end = Offset(
+                    x = endX,
+                    y = endY
+                ),
+                cap = StrokeCap.Round,
+                strokeWidth = 3f
             )
         }
+        for (j in 1..5) {
+            if(i % 6 == 5 && j == 5) continue
+            if(i % 6 == 0 && j == 1) continue
+            // 分針を描画
+            val minuteAngle = angle + (j * (360f / 24 / 6))  // 360度を24分割
+            val radian = Math.toRadians(minuteAngle.toDouble())
+            val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
+            val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
+            val endX = (centerOffset.x + radius * 0.95 * Math.cos(radian)).toFloat()
+            val endY = (centerOffset.y + radius * 0.95 * Math.sin(radian)).toFloat()
+            drawLine(
+                color = Color.Gray,
+                start = Offset(
+                    x = startX,
+                    y = startY
+                ),
+                end = Offset(
+                    x = endX,
+                    y = endY
+                ),
+                alpha = 0.5f,
+                cap = StrokeCap.Round,
+                strokeWidth = 2f
+            )
+        }
+    }
+}
+
+private fun DrawScope.DrawDigitalClockText(
+    centerOffset: TimeRangePickerOffset,
+    startTime: Time,
+    endTime: Time
+) {
+    drawIntoCanvas {
+        it.nativeCanvas.drawText(
+            "開始時間",
+            centerOffset.x,
+            centerOffset.y - ((centerOffset.y / 10) * 3),
+            Paint().apply {
+                color = Color.Black.toArgb()
+                textSize = 30f
+                textAlign = Paint.Align.CENTER
+            }
+        )
+        it.nativeCanvas.drawText(
+            startTime.formatText,
+            centerOffset.x,
+            centerOffset.y - (centerOffset.y / 10),
+            Paint().apply {
+                color = Color.Black.toArgb()
+                textSize = 100f
+                textAlign = Paint.Align.CENTER
+            }
+        )
+        it.nativeCanvas.drawText(
+            "終了時間",
+            centerOffset.x,
+            centerOffset.y + ((centerOffset.y / 10) * 1),
+            Paint().apply {
+                color = Color.Black.toArgb()
+                textSize = 30f
+                textAlign = Paint.Align.CENTER
+            }
+        )
+        it.nativeCanvas.drawText(
+            endTime.formatText,
+            centerOffset.x,
+            centerOffset.y + ((centerOffset.y / 10) * 3),
+            Paint().apply {
+                color = Color.Black.toArgb()
+                textSize = 100f
+                textAlign = Paint.Align.CENTER
+            }
+        )
     }
 }
 
