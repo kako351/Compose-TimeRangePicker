@@ -229,17 +229,24 @@ private fun DrawScope.DrawClockArc(
     centerOffset: TimeRangePickerOffset,
     radius: Float,
     color: Color,
-    strokeWidth: Float
+    strokeWidth: Float,
+    alpha: Float = 0.5f,
 ) {
-    DrawArc(
-        centerOffset = centerOffset,
-        radius = radius,
-        startAngle = 0f,
-        sweepAngle = 360f,
-        color = color,
-        alpha = 0.5f,
-        style = Stroke(width = strokeWidth)
+    DrawClockArc(
+        TimeRangePickerRangeBarStyle(
+            centerOffset = centerOffset,
+            radius = radius,
+            color = color,
+            width = strokeWidth,
+            alpha = alpha
+        )
     )
+}
+
+private fun DrawScope.DrawClockArc(
+    style: TimeRangePickerRangeBarStyle
+) {
+    DrawArc(style = style)
 }
 
 private fun DrawScope.DrawTimeRangeArc(
@@ -248,48 +255,43 @@ private fun DrawScope.DrawTimeRangeArc(
     endTimeDragAngle: Float,
     radius: Float,
     color: Color,
-    strokeWidth: Float
+    strokeWidth: Float,
+    cap: StrokeCap = StrokeCap.Round,
 ) {
     val startAngle = startTimeDragAngle
     var sweepAngle = endTimeDragAngle - startTimeDragAngle
     if(endTimeDragAngle < startTimeDragAngle) sweepAngle += TimeRangePickerAngle.MAX_ANGLE
-    DrawArc(
-        centerOffset = centerOffset,
-        radius = radius,
-        startAngle = startAngle,
-        sweepAngle = sweepAngle,
-        color = color,
-        style = Stroke(
+    DrawTimeRangeArc(
+        TimeRangePickerRangeBarStyle(
+            centerOffset = centerOffset,
+            radius = radius,
+            startAngle = startAngle,
+            sweepAngle = sweepAngle,
+            color = color,
             width = strokeWidth,
-            cap = StrokeCap.Round
-        ),
+            cap = cap
+        )
     )
 }
 
+private fun DrawScope.DrawTimeRangeArc(
+    style: TimeRangePickerRangeBarStyle
+) {
+    DrawArc(style = style)
+}
+
 private fun DrawScope.DrawArc(
-    centerOffset: TimeRangePickerOffset,
-    radius: Float,
-    startAngle: Float,
-    sweepAngle: Float,
-    color: Color,
-    style: DrawStyle,
-    alpha: Float = 1f
+    style: TimeRangePickerRangeBarStyle
 ) {
     drawArc(
-        color = color,
-        startAngle = startAngle,
-        sweepAngle = sweepAngle,
+        color = style.color,
+        startAngle = style.startAngle,
+        sweepAngle = style.sweepAngle,
         useCenter = false,
-        topLeft = Offset(
-            x = centerOffset.x - radius,
-            y = centerOffset.y - radius
-        ),
-        size = Size(
-            width = radius * 2,
-            height = radius * 2
-        ),
-        style = style,
-        alpha = alpha
+        topLeft = style.topLeft,
+        size = style.size,
+        style = style.strokeStyle,
+        alpha = style.alpha
     )
 }
 
