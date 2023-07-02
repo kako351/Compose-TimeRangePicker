@@ -95,24 +95,6 @@ fun TimeRangePicker(
         }
     }
     /**
-     * Calculate start time x offset from angle
-     */
-    val startAngleX = remember(key1 = startAngle) {
-        derivedStateOf {
-//            val radius = centerOffset.x - 50f
-            startAngle.x
-        }
-    }
-    /**
-     * Calculate start time y offset from angle
-     */
-    val startAngleY = remember(key1 = startAngle) {
-        derivedStateOf {
-//            val radius = centerY - 50f
-            startAngle.y
-        }
-    }
-    /**
      * Calculate start time degrees from angle
      */
     val startTimeDegrees = remember(key1 = startAngle, key2 = centerOffset) {
@@ -136,22 +118,6 @@ fun TimeRangePicker(
     val endAngle by remember(key1 = centerOffset, key2 = endTimeDragAngle) {
         derivedStateOf {
             centerOffset.byDegrees(endTimeDragAngle)
-        }
-    }
-    /**
-     * Calculate end time x offset from angle
-     */
-    val endAngleX = remember(key1 = endAngle) {
-        derivedStateOf {
-            endAngle.x
-        }
-    }
-    /**
-     * Calculate end time y offset from angle
-     */
-    val endAngleY = remember(key1 = endAngle) {
-        derivedStateOf {
-            endAngle.y
         }
     }
     /**
@@ -234,7 +200,7 @@ fun TimeRangePicker(
 
         DrawClock24Hour(centerOffset)
 
-        translate(startAngleX.value - (painter.intrinsicSize.width / 2), startAngleY.value - (painter.intrinsicSize.height / 2.25f)) {
+        translate(startAngle.x - (painter.intrinsicSize.width / 2), startAngle.y - (painter.intrinsicSize.height / 2.25f)) {
             with(painter) {
                 draw(
                     painter.intrinsicSize,
@@ -243,7 +209,7 @@ fun TimeRangePicker(
             }
         }
 
-        translate(endAngleX.value - (painter.intrinsicSize.width / 2), endAngleY.value - (painter.intrinsicSize.height / 1.75f)) {
+        translate(endAngle.x - (painter.intrinsicSize.width / 2), endAngle.y - (painter.intrinsicSize.height / 1.75f)) {
             with(painter) {
                 draw(
                     painter.intrinsicSize,
