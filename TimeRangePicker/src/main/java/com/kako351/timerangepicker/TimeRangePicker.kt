@@ -437,7 +437,7 @@ fun TimeRangePicker(
 
 @Preview
 @Composable
-fun TimeRangePickerPreview() {
+private fun TimeRangePickerPreview() {
     TimeRangePicker(onChangedTimeRange = {_, _, _, _ -> })
 }
 
