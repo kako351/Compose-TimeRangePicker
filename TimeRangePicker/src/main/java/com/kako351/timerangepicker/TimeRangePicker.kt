@@ -235,14 +235,8 @@ fun TimeRangePicker(
             .aspectRatio(1f)
             .onSizeChanged {
                 centerOffset = TimeRangePickerOffset.Offset(it.width / 2f, it.height / 2f)
-
-                val defaultStartTimeOffset =
-                    centerOffset.byTime(startHour.toFloat(), startMinute.toFloat())
-                startTimeDragOffset =
-                    TimeRangePickerOffset.Offset(defaultStartTimeOffset.x, defaultStartTimeOffset.y)
-
+                startTimeDragOffset = centerOffset.byTime(startHour.toFloat(), startMinute.toFloat())
                 endTimeDragOffset = centerOffset.byTime(endHour.toFloat(), endMinute.toFloat())
-
             }
             .pointerInput(Unit) {
                 detectDragGestures(
