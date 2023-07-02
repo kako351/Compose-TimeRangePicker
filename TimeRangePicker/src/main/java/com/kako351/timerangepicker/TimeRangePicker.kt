@@ -47,6 +47,8 @@ fun TimeRangePicker(
     modifier: Modifier = Modifier,
     startTime: Time,
     endTime: Time,
+    clockBarStyle: TimeRangePickerRangeBarStyle = Default,
+    rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
     onChangedTimeRange: (startTime: Time, endTime: Time) -> Unit
 ) = TimeRangePicker(
     modifier = modifier,
@@ -54,6 +56,7 @@ fun TimeRangePicker(
     startMinute = startTime.minute,
     endHour = endTime.hour,
     endMinute = endTime.minute,
+    clockBarStyle = clockBarStyle,
     onChangedTimeRange = { startHour, startMinute, endHour, endMinute ->
         onChangedTimeRange(
             Time.TimeRangePicker24Time(startHour, startMinute),
@@ -78,6 +81,8 @@ fun TimeRangePicker(
     startMinute: Int = TimeRangePickerDateTime.Zero,
     endHour: Int = TimeRangePickerDateTime.NoonHour,
     endMinute: Int = TimeRangePickerDateTime.Zero,
+    clockBarStyle: TimeRangePickerRangeBarStyle = Default,
+    rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
     val vector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24)
@@ -211,18 +216,18 @@ fun TimeRangePicker(
     ) {
         val radius = size.width / 2 * 0.9f
         DrawClockArc(
-            centerOffset = centerOffset,
-            radius = radius,
-            color = Color.LightGray,
-            strokeWidth = 70f,
+            style = clockBarStyle.copy(
+                centerOffset = centerOffset,
+                radius = radius,
+            )
         )
         DrawTimeRangeArc(
-            centerOffset = centerOffset,
+            style = rangeBarStyle.copy(
+                centerOffset = centerOffset,
+                radius = radius,
+            ),
             startTimeDragAngle = startTimeDragAngle,
-            endTimeDragAngle = endTimeDragAngle,
-            radius = radius,
-            color = Color(0xFF2196F3),
-            strokeWidth = 70f,
+            endTimeDragAngle = endTimeDragAngle
         )
 
         DrawClock24Hour(centerOffset)
@@ -260,7 +265,7 @@ private fun DrawScope.DrawClockArc(
     alpha: Float = 0.5f,
 ) {
     DrawClockArc(
-        TimeRangePickerRangeBarStyle(
+        RangeBarStyle(
             centerOffset = centerOffset,
             radius = radius,
             color = color,
@@ -285,26 +290,31 @@ private fun DrawScope.DrawTimeRangeArc(
     strokeWidth: Float,
     cap: StrokeCap = StrokeCap.Round,
 ) {
-    val startAngle = startTimeDragAngle
-    var sweepAngle = endTimeDragAngle - startTimeDragAngle
-    if(endTimeDragAngle < startTimeDragAngle) sweepAngle += TimeRangePickerAngle.MAX_ANGLE
     DrawTimeRangeArc(
-        TimeRangePickerRangeBarStyle(
+        style = RangeBarStyle(
             centerOffset = centerOffset,
             radius = radius,
-            startAngle = startAngle,
-            sweepAngle = sweepAngle,
             color = color,
             width = strokeWidth,
             cap = cap
-        )
+        ),
+        startTimeDragAngle = startTimeDragAngle,
+        endTimeDragAngle = endTimeDragAngle
     )
 }
 
 private fun DrawScope.DrawTimeRangeArc(
-    style: TimeRangePickerRangeBarStyle
+    style: TimeRangePickerRangeBarStyle,
+    startTimeDragAngle: Float,
+    endTimeDragAngle: Float,
 ) {
-    DrawArc(style = style)
+    val startAngle = startTimeDragAngle
+    var sweepAngle = endTimeDragAngle - startTimeDragAngle
+    if(endTimeDragAngle < startTimeDragAngle) sweepAngle += TimeRangePickerAngle.MAX_ANGLE
+    DrawArc(style = style.copy(
+        startAngle = startAngle,
+        sweepAngle = sweepAngle
+    ))
 }
 
 private fun DrawScope.DrawArc(
