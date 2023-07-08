@@ -308,7 +308,7 @@ private fun DrawScope.DrawClock24Hour(
     for (i in 0..23) {
         val radius = size.width / 2 * 0.8f
         val angle =  i * TimeRangePickerAngle.ANGLE_24HOUR // 360度を24分割
-        val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
+        val radian = Math.toRadians(angle.toDouble()) - TimeRangePickerAngle.RADIAN
         val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
         val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
         val endX = (centerOffset.x + radius * 0.95 * Math.cos(radian)).toFloat()
