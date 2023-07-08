@@ -479,7 +479,7 @@ private fun setHourOffset(
                     endOffset = endOffset,
                     degrees = degrees,
                     type = TimeRangePickerClockOffsetType.MINUTE,
-                    time = Time.TimeRangePicker24Time.createByDegrees(degrees)
+                    time = Time.TimeRangePicker24Time.createByDegrees(degrees, (60f / minuteSpan))
                 )
             )
         }

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.parcelize.Parcelize
 
 interface TimeFactory {
-    fun createByDegrees(degrees: Float): Time
+    fun createByDegrees(degrees: Float, minuteSpan: Float = TimeRangePickerAngle.ANGLE_24HOUR_MINUTE): Time
 }
 
 @Parcelize
@@ -21,9 +21,9 @@ sealed interface Time: Parcelable {
             get() = "%02d:%02d".format(hour, minute)
 
         companion object: TimeFactory {
-            override fun createByDegrees(degrees: Float): Time {
+            override fun createByDegrees(degrees: Float, minuteSpan: Float): Time {
                 val hour = degrees / TimeRangePickerAngle.ANGLE_24HOUR
-                val minute = (degrees % TimeRangePickerAngle.ANGLE_24HOUR) / TimeRangePickerAngle.ANGLE_24HOUR_MINUTE
+                val minute = (degrees % TimeRangePickerAngle.ANGLE_24HOUR) / minuteSpan
                 return TimeRangePicker24Time(hour = hour.toInt(), minute = minute.toInt())
             }
         }
