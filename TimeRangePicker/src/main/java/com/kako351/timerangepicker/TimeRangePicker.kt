@@ -2,7 +2,6 @@ package com.kako351.timerangepicker
 
 import android.content.res.Configuration
 import android.graphics.Paint
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.aspectRatio
@@ -100,7 +99,7 @@ fun TimeRangePicker(
     timeStyle: TimeRangePickerTextStyle = TimeRangePickerTimeTextStyle(),
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
-    val binarySearchOffsetUseCase = BinarySearchOffsetUseCase()
+    val binarySearchNearestByOffsetUseCase = BinarySearchNearestByOffsetUseCase()
 
     var startTime: Time by rememberSaveable {
         mutableStateOf(Time.TimeRangePicker24Time(startHour, startMinute))
@@ -207,7 +206,7 @@ fun TimeRangePicker(
                                 .Offset(change.position.x, change.position.y)
                                 .let {
                                     val degrees = it.toDegrees(centerOffset)
-                                    val offset = binarySearchOffsetUseCase(hourOffset.value, degrees)
+                                    val offset = binarySearchNearestByOffsetUseCase(hourOffset.value, degrees)
                                     startTimeDragOffset = offset.let {
                                         centerOffset.byDegrees(it.degrees)
                                     }
@@ -220,7 +219,7 @@ fun TimeRangePicker(
                                 .Offset(change.position.x, change.position.y)
                                 .let {
                                     val degrees = it.toDegrees(centerOffset)
-                                    val offset = binarySearchOffsetUseCase(hourOffset.value, degrees)
+                                    val offset = binarySearchNearestByOffsetUseCase(hourOffset.value, degrees)
                                     endTimeDragOffset = offset.let {
                                         centerOffset.byDegrees(it.degrees)
                                     }
