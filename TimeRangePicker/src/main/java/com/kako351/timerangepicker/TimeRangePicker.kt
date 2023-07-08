@@ -94,7 +94,7 @@ fun TimeRangePicker(
     clockBarStyle: TimeRangePickerRangeBarStyle = Default,
     rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
     startTimeLabel: String = stringResource(id = R.string.start_time_label),
-    endTimeLabel: String = stringResource(id = R.string.start_time_label),
+    endTimeLabel: String = stringResource(id = R.string.end_time_label),
     labelStyle: TimeRangePickerTextStyle = TimeRangePickerLabelTextStyle(),
     timeStyle: TimeRangePickerTextStyle = TimeRangePickerTimeTextStyle(),
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
