@@ -40,3 +40,16 @@ data class TimeRangePickerTimeTextStyle(
 
     override val alpha: Float = 1f
 ): TimeRangePickerTextStyle
+
+@Immutable
+data class TimeRangePickerClockHourTextStyle(
+    override val color: Color = Color.Black,
+
+    override val fontSize: TextUnit = 10.sp,
+
+    override val fontWeight: FontWeight = FontWeight.Normal,
+
+    override val textAlign: Align = Align.CENTER,
+
+    override val alpha: Float = 1f
+): TimeRangePickerTextStyle

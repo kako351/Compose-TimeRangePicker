@@ -281,7 +281,8 @@ private fun DrawScope.DrawArc(
 }
 
 private fun DrawScope.DrawClock24Hour(
-    centerOffset: TimeRangePickerOffset
+    centerOffset: TimeRangePickerOffset,
+    hourTextStyle: TimeRangePickerClockHourTextStyle = TimeRangePickerClockHourTextStyle(),
 ) {
     for (i in 0..23) {
         val radius = size.width / 2 * 0.8f
@@ -298,9 +299,9 @@ private fun DrawScope.DrawClock24Hour(
                     endX,
                     endY + 10f,
                     Paint().apply {
-                        color = Color.Black.toArgb()
-                        textSize = 45f
-                        textAlign = Paint.Align.CENTER
+                        color = hourTextStyle.color.toArgb()
+                        textSize = hourTextStyle.fontSize.toPx()
+                        textAlign = hourTextStyle.textAlign
                     }
                 )
             }
