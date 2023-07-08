@@ -100,6 +100,8 @@ fun TimeRangePicker(
     timeStyle: TimeRangePickerTextStyle = TimeRangePickerTimeTextStyle(),
     onChangedTimeRange: (startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) -> Unit
 ) {
+    val binarySearchOffsetUseCase = BinarySearchOffsetUseCase()
+
     var startTime: Time by rememberSaveable {
         mutableStateOf(Time.TimeRangePicker24Time(startHour, startMinute))
     }
@@ -205,7 +207,7 @@ fun TimeRangePicker(
                                 .Offset(change.position.x, change.position.y)
                                 .let {
                                     val degrees = it.toDegrees(centerOffset)
-                                    val offset = BinarySearchOffsetUseCase().invoke(hourOffset.value, degrees)
+                                    val offset = binarySearchOffsetUseCase(hourOffset.value, degrees)
                                     startTimeDragOffset = offset.let {
                                         centerOffset.byDegrees(it.degrees)
                                     }
@@ -218,7 +220,7 @@ fun TimeRangePicker(
                                 .Offset(change.position.x, change.position.y)
                                 .let {
                                     val degrees = it.toDegrees(centerOffset)
-                                    val offset = BinarySearchOffsetUseCase().invoke(hourOffset.value, degrees)
+                                    val offset = binarySearchOffsetUseCase(hourOffset.value, degrees)
                                     endTimeDragOffset = offset.let {
                                         centerOffset.byDegrees(it.degrees)
                                     }
