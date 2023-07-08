@@ -233,12 +233,6 @@ fun TimeRangePicker(
                 )
             }
     ) {
-        drawOval(
-            color = Color.Red,
-            size = Size(width = 10f, height = 10f),
-            topLeft = Offset(x = centerOffset.x, y = centerOffset.y)
-        )
-
         val radius = size.width / 2 * 0.9f
         DrawClockArc(
             style = clockBarStyle.copy(
