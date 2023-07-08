@@ -2,6 +2,7 @@ package com.kako351.timerangepicker
 
 import android.content.res.Configuration
 import android.graphics.Paint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.aspectRatio
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -154,6 +156,16 @@ fun TimeRangePicker(
         )
     }
 
+    var size by remember {
+        mutableStateOf(Size.Zero)
+    }
+
+    val hourOffset: State<List<TimeRangePickerClockOffset>> = remember(key1 = centerOffset, key2 = size) {
+        derivedStateOf {
+            setHourOffset(centerOffset, size)
+        }
+    }
+
     Canvas(
         modifier = modifier
             .then(
@@ -164,6 +176,7 @@ fun TimeRangePicker(
             )
             .aspectRatio(1f)
             .onSizeChanged {
+                size = Size(width = it.width.toFloat(), height = it.height.toFloat())
                 centerOffset = TimeRangePickerOffset.Offset(it.width / 2f, it.height / 2f)
                 startTimeDragOffset = centerOffset.byTime(startTime.hour, startTime.minute)
                 endTimeDragOffset = centerOffset.byTime(endTime.hour, endTime.minute)
@@ -191,8 +204,11 @@ fun TimeRangePicker(
                             TimeRangePickerOffset
                                 .Offset(change.position.x, change.position.y)
                                 .let {
-                                    startTimeDragOffset =
-                                        centerOffset.byDegrees(it.toDegrees(centerOffset))
+                                    val degrees = it.toDegrees(centerOffset)
+                                    val offset = BinarySearchOffsetUseCase().invoke(hourOffset.value, degrees)
+                                    startTimeDragOffset = offset.let {
+                                        centerOffset.byDegrees(it.degrees)
+                                    }
                                     startTime = Time.TimeRangePicker24Time.createByDegrees(
                                         startTimeDragOffset.toAngle(centerOffset)
                                     )
@@ -201,8 +217,11 @@ fun TimeRangePicker(
                             TimeRangePickerOffset
                                 .Offset(change.position.x, change.position.y)
                                 .let {
-                                    endTimeDragOffset =
-                                        centerOffset.byDegrees(it.toDegrees(centerOffset))
+                                    val degrees = it.toDegrees(centerOffset)
+                                    val offset = BinarySearchOffsetUseCase().invoke(hourOffset.value, degrees)
+                                    endTimeDragOffset = offset.let {
+                                        centerOffset.byDegrees(it.degrees)
+                                    }
                                     endTime = Time.TimeRangePicker24Time.createByDegrees(
                                         endTimeDragOffset.toAngle(centerOffset)
                                     )
@@ -414,3 +433,55 @@ private fun TimeRangePickerPreview() {
     TimeRangePicker(onChangedTimeRange = {_, _, _, _ -> })
 }
 
+private fun setHourOffset(
+    centerOffset: TimeRangePickerOffset,
+    size: Size
+) : List<TimeRangePickerClockOffset> {
+    val offsets: MutableList<TimeRangePickerClockOffset> = mutableListOf()
+    for (i in 0..23) {
+        val radius = size.width / 2 * 0.8f
+        val angle = i * TimeRangePickerAngle.ANGLE_24HOUR // 360度を24分割
+        val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
+        val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
+        val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
+        val endX = (centerOffset.x + radius * 0.95 * Math.cos(radian)).toFloat()
+        val endY = (centerOffset.y + radius * 0.95 * Math.sin(radian)).toFloat()
+
+        val startOffset = TimeRangePickerOffset.Offset(x = startX, y = startY)
+        val endOffset = TimeRangePickerOffset.Offset(x = endX, y = endY)
+
+        offsets.add(
+            TimeRangePickerClockOffset(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                degrees = startOffset.toDegrees(centerOffset),
+                type = TimeRangePickerClockOffsetType.HOUR,
+                time = Time.TimeRangePicker24Time.createByDegrees(startOffset.toDegrees(centerOffset))
+            )
+        )
+
+        for (j in 1..5) {
+            val minuteAngle = angle + (j * (TimeRangePickerAngle.ANGLE_24HOUR / 6))  // 360度を24分割
+            val radian = Math.toRadians(minuteAngle.toDouble())
+            val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
+            val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
+            val endX = (centerOffset.x + radius * 0.95 * Math.cos(radian)).toFloat()
+            val endY = (centerOffset.y + radius * 0.95 * Math.sin(radian)).toFloat()
+
+            val startOffset = TimeRangePickerOffset.Offset(x = startX, y = startY)
+            val endOffset = TimeRangePickerOffset.Offset(x = endX, y = endY)
+
+            offsets.add(
+                TimeRangePickerClockOffset(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    degrees = startOffset.toDegrees(centerOffset),
+                    type = TimeRangePickerClockOffsetType.MINUTE,
+                    time = Time.TimeRangePicker24Time.createByDegrees(startOffset.toDegrees(centerOffset))
+                )
+            )
+        }
+    }
+
+    return offsets.sortedBy { it.degrees }
+}
