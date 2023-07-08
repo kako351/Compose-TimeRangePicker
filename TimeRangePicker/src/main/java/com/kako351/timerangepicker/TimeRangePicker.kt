@@ -46,6 +46,7 @@ fun TimeRangePicker(
     endTime: Time,
     clockBarStyle: TimeRangePickerRangeBarStyle = Default,
     rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
+    hourSpan: Int = 6,
     startTimeLabel: String = stringResource(id = R.string.start_time_label),
     endTimeLabel: String = stringResource(id = R.string.start_time_label),
     labelStyle: TimeRangePickerTextStyle = TimeRangePickerLabelTextStyle(),
@@ -57,6 +58,7 @@ fun TimeRangePicker(
     startMinute = startTime.minute,
     endHour = endTime.hour,
     endMinute = endTime.minute,
+    hourSpan = hourSpan,
     clockBarStyle = clockBarStyle,
     rangeBarStyle = rangeBarStyle,
     startTimeLabel = startTimeLabel,
@@ -87,6 +89,7 @@ fun TimeRangePicker(
     startMinute: Int = TimeRangePickerDateTime.Zero,
     endHour: Int = TimeRangePickerDateTime.NoonHour,
     endMinute: Int = TimeRangePickerDateTime.Zero,
+    hourSpan: Int = 6,
     clockBarStyle: TimeRangePickerRangeBarStyle = Default,
     rangeBarStyle: TimeRangePickerRangeBarStyle = RangeBarStyle.Default,
     startTimeLabel: String = stringResource(id = R.string.start_time_label),
@@ -231,7 +234,10 @@ fun TimeRangePicker(
             endTimeDragAngle = endTimeDragAngle
         )
 
-        DrawClock24Hour(centerOffset)
+        DrawClock24Hour(
+            centerOffset,
+            hourSpan = hourSpan,
+        )
 
         DrawDigitalClockText(
             centerOffset = centerOffset,
@@ -282,6 +288,7 @@ private fun DrawScope.DrawArc(
 
 private fun DrawScope.DrawClock24Hour(
     centerOffset: TimeRangePickerOffset,
+    hourSpan: Int = 6,
     hourTextStyle: TimeRangePickerClockHourTextStyle = TimeRangePickerClockHourTextStyle(),
 ) {
     for (i in 0..23) {
@@ -292,7 +299,7 @@ private fun DrawScope.DrawClock24Hour(
         val startY = (centerOffset.y + radius * Math.sin(radian)).toFloat()
         val endX = (centerOffset.x + radius * 0.95 * Math.cos(radian)).toFloat()
         val endY = (centerOffset.y + radius * 0.95 * Math.sin(radian)).toFloat()
-        if(i % 6 == 0) {
+        if(i % hourSpan == 0) {
             drawIntoCanvas {
                 it.nativeCanvas.drawText(
                     "${i}",
@@ -321,8 +328,8 @@ private fun DrawScope.DrawClock24Hour(
             )
         }
         for (j in 1..5) {
-            if(i % 6 == 5 && j == 5) continue
-            if(i % 6 == 0 && j == 1) continue
+            if(i % hourSpan == (hourSpan - 1) && j == 5) continue
+            if(i % hourSpan == 0 && j == 1) continue
             // 分針を描画
             val minuteAngle = angle + (j * (TimeRangePickerAngle.ANGLE_24HOUR / 6))  // 360度を24分割
             val radian = Math.toRadians(minuteAngle.toDouble())
