@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.kako351.timerangepicker.TimeRangePicker
 import com.kako351.timerangepicker.sample.ui.theme.TimeRangePickerTheme
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
                     TimeRangePicker { startHour, startMinutes, endHour, endMinutes ->
                         Log.i("MainActivity", "startHour: $startHour, startMinutes: $startMinutes, endHour: $endHour, endMinutes: $endMinutes")
                     }
+                    Text(text = "Hello World!", style = TextStyle())
                 }
             }
         }

@@ -345,6 +345,8 @@ private fun DrawScope.DrawDigitalClockText(
     endTime: Time,
     startTimeLabel: String,
     endTimeLabel: String,
+    labelStyle: TimeRangePickerTextStyle = TimeRangePickerLabelTextStyle(),
+    timeStyle: TimeRangePickerTextStyle = TimeRangePickerTimeTextStyle(),
 ) {
     drawIntoCanvas {
         it.nativeCanvas.drawText(
@@ -352,9 +354,9 @@ private fun DrawScope.DrawDigitalClockText(
             centerOffset.x,
             centerOffset.y - ((centerOffset.y / 10) * 3),
             Paint().apply {
-                color = Color.Black.toArgb()
-                textSize = 30f
-                textAlign = Paint.Align.CENTER
+                color = labelStyle.color.toArgb()
+                textSize = labelStyle.fontSize.toPx()
+                textAlign = labelStyle.textAlign
             }
         )
         it.nativeCanvas.drawText(
@@ -362,9 +364,9 @@ private fun DrawScope.DrawDigitalClockText(
             centerOffset.x,
             centerOffset.y - (centerOffset.y / 10),
             Paint().apply {
-                color = Color.Black.toArgb()
-                textSize = 100f
-                textAlign = Paint.Align.CENTER
+                color = timeStyle.color.toArgb()
+                textSize = timeStyle.fontSize.toPx()
+                textAlign = timeStyle.textAlign
             }
         )
         it.nativeCanvas.drawText(
@@ -372,9 +374,9 @@ private fun DrawScope.DrawDigitalClockText(
             centerOffset.x,
             centerOffset.y + ((centerOffset.y / 10) * 1),
             Paint().apply {
-                color = Color.Black.toArgb()
-                textSize = 30f
-                textAlign = Paint.Align.CENTER
+                color = labelStyle.color.toArgb()
+                textSize = labelStyle.fontSize.toPx()
+                textAlign = labelStyle.textAlign
             }
         )
         it.nativeCanvas.drawText(
@@ -382,9 +384,9 @@ private fun DrawScope.DrawDigitalClockText(
             centerOffset.x,
             centerOffset.y + ((centerOffset.y / 10) * 3),
             Paint().apply {
-                color = Color.Black.toArgb()
-                textSize = 100f
-                textAlign = Paint.Align.CENTER
+                color = timeStyle.color.toArgb()
+                textSize = timeStyle.fontSize.toPx()
+                textAlign = timeStyle.textAlign
             }
         )
     }
