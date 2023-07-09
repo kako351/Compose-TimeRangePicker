@@ -55,7 +55,7 @@ android {
 }
 
 dependencies {
-//    implementation project(":TimeRangePicker")
+    implementation project(":TimeRangePicker")
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
@@ -72,6 +72,4 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
-    implementation "com.github.kako351:Compose-TimeRangePicker:-SNAPSHOT"
-//    ktlint "com.pinterest:ktlint:0.50.0"
 }
