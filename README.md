@@ -2,7 +2,7 @@
 
 TimeRangePicker created in Jetpack Compose.
 
-<img src="https://github.com/kako351/Compose-TimeRangePicker/blob/main/images/screenshot.gif" width="300">
+<img src="https://github.com/kako351/Compose-TimeRangePicker/blob/main/images/screenshot-v1.gif" width="300">
 
 ## Get Started
 
