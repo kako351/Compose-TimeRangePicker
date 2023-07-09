@@ -23,7 +23,7 @@ sealed interface Time: Parcelable {
         companion object: TimeFactory {
             override fun createByDegrees(degrees: Float, minuteSpan: Float): Time {
                 val hour = degrees / TimeRangePickerAngle.ANGLE_24HOUR
-                val minute = (degrees % TimeRangePickerAngle.ANGLE_24HOUR) / minuteSpan
+                val minute = degrees % TimeRangePickerAngle.ANGLE_24HOUR / minuteSpan
                 return TimeRangePicker24Time(hour = hour.toInt(), minute = minute.toInt())
             }
         }

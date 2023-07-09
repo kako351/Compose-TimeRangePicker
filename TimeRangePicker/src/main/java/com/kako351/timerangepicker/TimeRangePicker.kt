@@ -18,7 +18,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -31,7 +30,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import java.lang.Math.PI
-import kotlin.math.round
 
 /**
  * TimeRangePicker is a UI component that allows the user to select a time range.
@@ -160,13 +158,9 @@ fun TimeRangePicker(
         )
     }
 
-    var size by remember {
-        mutableStateOf(Size.Zero)
-    }
-
-    val hourOffset: State<List<TimeRangePickerClockOffset>> = remember(key1 = centerOffset, key2 = size) {
+    val hourOffset: State<List<TimeRangePickerClockOffset>> = remember(key1 = centerOffset) {
         derivedStateOf {
-            setHourOffset(centerOffset, size, minuteSpan)
+            setHourOffset(centerOffset, minuteSpan)
         }
     }
 
@@ -180,7 +174,6 @@ fun TimeRangePicker(
             )
             .aspectRatio(1f)
             .onSizeChanged {
-                size = Size(width = it.width.toFloat(), height = it.height.toFloat())
                 centerOffset = TimeRangePickerOffset.Offset(it.width / 2f, it.height / 2f)
                 startTimeDragOffset = centerOffset.byTime(startTime.hour, startTime.minute)
                 endTimeDragOffset = centerOffset.byTime(endTime.hour, endTime.minute)
@@ -435,12 +428,11 @@ private fun TimeRangePickerPreview() {
 
 private fun setHourOffset(
     centerOffset: TimeRangePickerOffset,
-    size: Size,
     minuteSpan: Int
 ) : List<TimeRangePickerClockOffset> {
     val offsets: MutableList<TimeRangePickerClockOffset> = mutableListOf()
     for (i in 0..23) {
-        val radius = size.width / 2 * 0.8f
+        val radius = centerOffset.x * 0.8f
         val angle = i * TimeRangePickerAngle.ANGLE_24HOUR // 360度を24分割
         val radian = Math.toRadians(angle.toDouble()) - (PI / 2)
         val startX = (centerOffset.x + radius * Math.cos(radian)).toFloat()
@@ -450,14 +442,15 @@ private fun setHourOffset(
 
         val startOffset = TimeRangePickerOffset.Offset(x = startX, y = startY)
         val endOffset = TimeRangePickerOffset.Offset(x = endX, y = endY)
+        val degrees = startOffset.toDegrees(centerOffset)
 
         offsets.add(
             TimeRangePickerClockOffset(
                 startOffset = startOffset,
                 endOffset = endOffset,
-                degrees = startOffset.toDegrees(centerOffset),
+                degrees = degrees,
                 type = TimeRangePickerClockOffsetType.HOUR,
-                time = Time.TimeRangePicker24Time.createByDegrees(startOffset.toDegrees(centerOffset))
+                time = Time.TimeRangePicker24Time.createByDegrees(degrees, (60f / minuteSpan))
             )
         )
 
@@ -472,7 +465,7 @@ private fun setHourOffset(
             val startOffset = TimeRangePickerOffset.Offset(x = startX, y = startY)
             val endOffset = TimeRangePickerOffset.Offset(x = endX, y = endY)
 
-            val degrees = round(startOffset.toDegrees(centerOffset) * 10) / 10
+            val degrees = startOffset.toDegrees(centerOffset)
             offsets.add(
                 TimeRangePickerClockOffset(
                     startOffset = startOffset,

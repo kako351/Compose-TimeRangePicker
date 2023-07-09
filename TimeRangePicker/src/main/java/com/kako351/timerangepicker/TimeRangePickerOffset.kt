@@ -3,6 +3,7 @@ package com.kako351.timerangepicker
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import kotlinx.android.parcel.Parcelize
+import kotlin.math.round
 
 @Parcelize
 sealed interface TimeRangePickerOffset : Parcelable {
@@ -33,7 +34,7 @@ sealed interface TimeRangePickerOffset : Parcelable {
      * @return Float
      */
     fun toDegrees(other: TimeRangePickerOffset) =
-        Math.toDegrees(Math.atan2((this.y - other.y).toDouble(), (this.x - other.y).toDouble())).toFloat()
+        round( Math.toDegrees(Math.atan2((this.y - other.y).toDouble(), (this.x - other.y).toDouble())).toFloat() * 10.0f) / 10.0f
 
     /**
      * Calculate offset by degrees
