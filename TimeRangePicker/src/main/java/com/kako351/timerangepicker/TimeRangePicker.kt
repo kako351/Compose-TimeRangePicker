@@ -37,6 +37,14 @@ import java.lang.Math.PI
  * @property modifier Modifier to be applied to the layout.
  * @property startTime The start time of the time range.
  * @property endTime The end time of the time range.
+ * @property hourSpan The number of hours to be displayed on the clock.
+ * @property minuteSpan The number of minutes to be displayed on the clock.
+ * @property clockBarStyle The style of the clock bar.
+ * @property rangeBarStyle The style of the range bar.
+ * @property startTimeLabel The label of the start time.
+ * @property endTimeLabel The label of the end time.
+ * @property labelStyle The style of the label.
+ * @property timeStyle The style of the time.
  * @property onChangedTimeRange Callback that is invoked when the time range is changed.
  */
 @Composable
@@ -81,6 +89,14 @@ fun TimeRangePicker(
  * @property startMinute The start minute of the time range.
  * @property endHour The end hour of the time range.
  * @property endMinute The end minute of the time range.
+ * @property hourSpan The number of hours to be displayed on the clock.
+ * @property minuteSpan The number of minutes to be displayed on the clock.
+ * @property clockBarStyle The style of the clock bar.
+ * @property rangeBarStyle The style of the range bar.
+ * @property startTimeLabel The label of the start time.
+ * @property endTimeLabel The label of the end time.
+ * @property labelStyle The style of the label.
+ * @property timeStyle The style of the time.
  * @property onChangedTimeRange Callback that is invoked when the time range is changed.
  */
 @Composable
