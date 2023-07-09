@@ -73,9 +73,9 @@ interface TimeRangePickerRangeBarStyle {
 object Default : TimeRangePickerRangeBarStyle
 
 class RangeBarStyle(
-    override val centerOffset: TimeRangePickerOffset,
+    override val centerOffset: TimeRangePickerOffset = TimeRangePickerOffset.Offset(x = 0f, y = 0f),
 
-    override val radius: Float,
+    override val radius: Float = 0f,
 
     override val startAngle: Float = 0f,
 
@@ -90,9 +90,6 @@ class RangeBarStyle(
     override val alpha: Float = 1f
 ) : TimeRangePickerRangeBarStyle {
     companion object {
-        val Default = RangeBarStyle(
-            centerOffset = TimeRangePickerOffset.Offset(x = 0f, y = 0f),
-            radius = 0f
-        )
+        val Default = RangeBarStyle()
     }
 }
