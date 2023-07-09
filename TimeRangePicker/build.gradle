@@ -2,10 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
-}
-
-configurations {
-    ktlint
+    id 'maven-publish'
 }
 
 android {
@@ -58,5 +55,17 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
-    ktlint "com.pinterest:ktlint:0.50.0"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.kako351.timerangepicker'
+                artifactId = 'timerangepicker'
+                version = '0.1.0'
+            }
+        }
+    }
 }

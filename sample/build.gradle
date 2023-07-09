@@ -3,10 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-configurations {
-    ktlint
-}
-
 android {
     namespace 'com.kako351.timerangepicker.sample'
     compileSdk 33
@@ -76,5 +72,5 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
-    ktlint "com.pinterest:ktlint:0.50.0"
+//    ktlint "com.pinterest:ktlint:0.50.0"
 }
